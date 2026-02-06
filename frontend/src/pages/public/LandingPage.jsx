@@ -16,7 +16,7 @@ const LandingPage = () => {
               Welcome to FarmLease Platform
             </h1>
             <p className="text-xl mb-8 max-w-3xl mx-auto">
-              Connecting farm owners with aspiring farmers and agro-dealers. 
+              Connecting farm owners with aspiring farmers and agro-dealers
               Find verified agricultural land, lease with confidence, and get AI-powered crop recommendations.
             </p>
             <div className="flex justify-center space-x-4">

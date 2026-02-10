@@ -5,9 +5,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
-
 from .models import User
 from .serializers import RegisterSerializer, MyTokenObtainPairSerializer
+from .permissions import IsSystemAdmin
 
 # 1. Registration View
 class RegisterView(generics.CreateAPIView):
@@ -47,4 +47,17 @@ def get_user_profile(request):
         "phone": user.phone_number
     })
 
+class AdminDashboardStatsView(APIView):
+    # This ensures ONLY staff(admin) can call this API
+    permission_classes = [IsSystemAdmin]
+
+    def get(self, request):
+        # Gathering some quick stats for the Admin dashboard
+        stats = {
+            "total_farmers": User.objects.filter(role="farmer").count(),
+            "total_landowners": User.objects.filter(role="landowner").count(),
+            # "pending_verifications": Land.objects.filter(status="pending").count(),
+            "system_revenue_estimate": 0.00, 
+        }
+        return Response(stats)
 

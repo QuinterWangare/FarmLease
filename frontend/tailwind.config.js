@@ -4,10 +4,13 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
         primary: {
+          DEFAULT: '#047857',
+          dark: '#064e3b',
           50: '#f0fdf4',
           100: '#dcfce7',
           200: '#bbf7d0',
@@ -19,6 +22,16 @@ export default {
           800: '#166534',
           900: '#14532d',
         },
+        'sidebar-bg': '#0f392b',
+        accent: '#d97706',
+        earth: {
+          DEFAULT: '#5D4037',
+          light: '#8D6E63',
+        },
+        'background-light': '#f8fafc',
+        'background-dark': '#0f172a',
+        'surface-light': '#ffffff',
+        'surface-dark': '#1e293b',
         secondary: {
           50: '#fef3c7',
           100: '#fde68a',
@@ -34,6 +47,13 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        serif: ['Playfair Display', 'serif'],
+      },
+      borderRadius: {
+        'DEFAULT': '0.375rem',
+        'lg': '0.5rem',
+        'xl': '0.75rem',
+        '2xl': '1rem',
       },
     },
   },

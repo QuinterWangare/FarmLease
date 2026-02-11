@@ -2,9 +2,17 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Spinner from './Spinner';
 
-const ProtectedRoute = ({ children, allowedRoles = [] }) => {
+const ProtectedRoute = ({ children, allowedRoles = [], requireAdmin = false }) => {
+  // Development mode bypass - allow all access
+  const isDev = import.meta.env.VITE_DEV_MODE === 'true';
+  
+  if (isDev) {
+    return children;
+  }
+
   const { user, loading } = useAuth();
 
+  // Show loading spinner while checking authentication
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -13,11 +21,25 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
     );
   }
 
+  // Redirect to login if not authenticated
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+  // If admin access is required, check is_staff flag
+  if (requireAdmin && !user.is_staff) {
+    // Redirect to appropriate dashboard based on user role
+    const dashboardRoutes = {
+      OWNER: '/owner/dashboard',
+      LESSEE: '/lessee/dashboard',
+      DEALER: '/dealer/dashboard',
+      ADMIN: '/admin/dashboard',
+    };
+    return <Navigate to={dashboardRoutes[user.role] || '/'} replace />;
+  }
+
+  // Check role authorization (admins can access all roles)
+  if (allowedRoles.length > 0 && !allowedRoles.includes(user.role) && !user.is_staff) {
     // Redirect to appropriate dashboard based on user role
     const dashboardRoutes = {
       OWNER: '/owner/dashboard',

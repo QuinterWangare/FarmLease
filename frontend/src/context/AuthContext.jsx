@@ -30,25 +30,27 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const data = await authService.login(email, password);
-      setUser(data.user);
+      const currentUser = authService.getCurrentUser();
+      setUser(currentUser);
       
-      // Redirect based on role
-      const role = data.user.role;
-      switch (role) {
-        case 'OWNER':
-          navigate('/owner/dashboard');
-          break;
-        case 'LESSEE':
-          navigate('/lessee/dashboard');
-          break;
-        case 'DEALER':
-          navigate('/dealer/dashboard');
-          break;
-        case 'ADMIN':
-          navigate('/admin/dashboard');
-          break;
-        default:
-          navigate('/');
+      // Redirect based on role and is_staff
+      if (currentUser.is_staff) {
+        navigate('/admin/dashboard');
+      } else {
+        const role = currentUser.role;
+        switch (role) {
+          case 'OWNER':
+            navigate('/owner/dashboard');
+            break;
+          case 'LESSEE':
+            navigate('/lessee/dashboard');
+            break;
+          case 'DEALER':
+            navigate('/dealer/dashboard');
+            break;
+          default:
+            navigate('/');
+        }
       }
       
       toast.success('Login successful!');
@@ -92,6 +94,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     isAuthenticated: !!user,
     userRole: user?.role || null,
+    isStaff: user?.is_staff || false,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

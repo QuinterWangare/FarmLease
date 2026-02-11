@@ -15,35 +15,51 @@ const authService = {
 
   // Login
   login: async (email, password) => {
-    const response = await apiClient.post(API_ENDPOINTS.LOGIN, {
-      email,
-      password,
-    });
-    
-    if (response.data.access) {
-      localStorage.setItem('accessToken', response.data.access);
-      localStorage.setItem('refreshToken', response.data.refresh);
+    console.log('Attempting login with:', { email, password: '***' });
+    try {
+      const response = await apiClient.post(API_ENDPOINTS.LOGIN, {
+        email,
+        password,
+      });
       
-      // Decode token to get user info
-      const decodedToken = authService.decodeToken(response.data.access);
-      if (decodedToken) {
-        const user = {
-          id: decodedToken.user_id,
-          email: decodedToken.email,
-          role: decodedToken.role,
-          is_staff: decodedToken.is_staff,
-          username: decodedToken.username,
-        };
-        localStorage.setItem('user', JSON.stringify(user));
+      if (response.data.access) {
+        localStorage.setItem('accessToken', response.data.access);
+        localStorage.setItem('refreshToken', response.data.refresh);
+        
+        // Decode token to get user info
+        const decodedToken = authService.decodeToken(response.data.access);
+        console.log('Decoded token:', decodedToken);
+        if (decodedToken) {
+          const user = {
+            id: decodedToken.user_id,
+            email: decodedToken.email,
+            role: decodedToken.role,
+            is_staff: decodedToken.is_staff,
+            username: decodedToken.username,
+          };
+          localStorage.setItem('user', JSON.stringify(user));
+        }
       }
+      
+      return response.data;
+    } catch (error) {
+      console.error('Login failed:', error.response?.data);
+      throw error;
     }
-    
-    return response.data;
   },
 
   // Register
   register: async (userData) => {
-    const response = await apiClient.post(API_ENDPOINTS.REGISTER, userData);
+    // Map frontend field names to backend field names
+    const backendData = {
+      username: userData.name,
+      email: userData.email,
+      password: userData.password,
+      phone_number: userData.phone,
+      role: userData.role // Already mapped to backend values in constants
+    };
+    console.log('Sending registration data:', backendData);
+    const response = await apiClient.post(API_ENDPOINTS.REGISTER, backendData);
     return response.data;
   },
 

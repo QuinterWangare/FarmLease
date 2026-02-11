@@ -55,7 +55,7 @@ function App() {
           <Route
             path="/owner/dashboard"
             element={
-              <ProtectedRoute allowedRoles={['OWNER']}>
+              <ProtectedRoute allowedRoles={['landowner']}>
                 <OwnerDashboard />
               </ProtectedRoute>
             }
@@ -63,7 +63,7 @@ function App() {
           <Route
             path="/owner/lands"
             element={
-              <ProtectedRoute allowedRoles={['OWNER']}>
+              <ProtectedRoute allowedRoles={['landowner']}>
                 <MyLandsPage />
               </ProtectedRoute>
             }
@@ -71,7 +71,7 @@ function App() {
           <Route
             path="/owner/lands/add"
             element={
-              <ProtectedRoute allowedRoles={['OWNER']}>
+              <ProtectedRoute allowedRoles={['landowner']}>
                 <AddLandPage />
               </ProtectedRoute>
             }
@@ -79,7 +79,7 @@ function App() {
           <Route
             path="/owner/lease-requests"
             element={
-              <ProtectedRoute allowedRoles={['OWNER']}>
+              <ProtectedRoute allowedRoles={['landowner']}>
                 <LeaseRequestsPage />
               </ProtectedRoute>
             }
@@ -87,7 +87,7 @@ function App() {
           <Route
             path="/owner/financials"
             element={
-              <ProtectedRoute allowedRoles={['OWNER']}>
+              <ProtectedRoute allowedRoles={['landowner']}>
                 <FinancialsPage />
               </ProtectedRoute>
             }
@@ -95,7 +95,7 @@ function App() {
           <Route
             path="/owner/escrow"
             element={
-              <ProtectedRoute allowedRoles={['OWNER']}>
+              <ProtectedRoute allowedRoles={['landowner']}>
                 <EscrowStatusPage />
               </ProtectedRoute>
             }
@@ -103,7 +103,7 @@ function App() {
           <Route
             path="/owner/agreements"
             element={
-              <ProtectedRoute allowedRoles={['OWNER']}>
+              <ProtectedRoute allowedRoles={['landowner']}>
                 <AgreementsPage />
               </ProtectedRoute>
             }
@@ -111,7 +111,7 @@ function App() {
           <Route
             path="/owner/profile"
             element={
-              <ProtectedRoute allowedRoles={['OWNER']}>
+              <ProtectedRoute allowedRoles={['landowner']}>
                 <ProfileSettingsPage />
               </ProtectedRoute>
             }
@@ -125,7 +125,7 @@ function App() {
           <Route
             path="/lessee/dashboard"
             element={
-              <ProtectedRoute allowedRoles={['LESSEE']}>
+              <ProtectedRoute allowedRoles={['farmer']}>
                 <LesseeDashboard />
               </ProtectedRoute>
             }
@@ -133,7 +133,7 @@ function App() {
           <Route
             path="/lessee/browse"
             element={
-              <ProtectedRoute allowedRoles={['LESSEE']}>
+              <ProtectedRoute allowedRoles={['farmer']}>
                 <BrowseLandsPage />
               </ProtectedRoute>
             }
@@ -141,7 +141,7 @@ function App() {
           <Route
             path="/lessee/lands/:id"
             element={
-              <ProtectedRoute allowedRoles={['LESSEE']}>
+              <ProtectedRoute allowedRoles={['farmer']}>
                 <LandDetailPage />
               </ProtectedRoute>
             }
@@ -149,7 +149,7 @@ function App() {
           <Route
             path="/lessee/recommendations"
             element={
-              <ProtectedRoute allowedRoles={['LESSEE']}>
+              <ProtectedRoute allowedRoles={['farmer']}>
                 <CropRecommendationPage />
               </ProtectedRoute>
             }
@@ -163,7 +163,7 @@ function App() {
           <Route
             path="/dealer/dashboard"
             element={
-              <ProtectedRoute allowedRoles={['DEALER']}>
+              <ProtectedRoute allowedRoles={['dealer']}>
                 <DealerDashboard />
               </ProtectedRoute>
             }
@@ -171,7 +171,7 @@ function App() {
           <Route
             path="/dealer/products"
             element={
-              <ProtectedRoute allowedRoles={['DEALER']}>
+              <ProtectedRoute allowedRoles={['dealer']}>
                 <MyProductsPage />
               </ProtectedRoute>
             }
@@ -179,7 +179,7 @@ function App() {
           <Route
             path="/dealer/products/add"
             element={
-              <ProtectedRoute allowedRoles={['DEALER']}>
+              <ProtectedRoute allowedRoles={['dealer']}>
                 <AddProductPage />
               </ProtectedRoute>
             }

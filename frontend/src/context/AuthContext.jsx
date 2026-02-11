@@ -39,13 +39,13 @@ export const AuthProvider = ({ children }) => {
       } else {
         const role = currentUser.role;
         switch (role) {
-          case 'OWNER':
+          case 'landowner':
             navigate('/owner/dashboard');
             break;
-          case 'LESSEE':
+          case 'farmer':
             navigate('/lessee/dashboard');
             break;
-          case 'DEALER':
+          case 'dealer':
             navigate('/dealer/dashboard');
             break;
           default:
@@ -69,7 +69,30 @@ export const AuthProvider = ({ children }) => {
       navigate('/login');
       return data;
     } catch (error) {
-      const message = error.response?.data?.message || 'Registration failed';
+      console.error('Registration error details:', error.response?.data);
+      // Handle validation errors from backend
+      const errorData = error.response?.data;
+      let message = 'Registration failed';
+      
+      if (errorData) {
+        if (typeof errorData === 'string') {
+          message = errorData;
+        } else if (errorData.message) {
+          message = errorData.message;
+        } else {
+          // Handle field-specific errors
+          const errors = [];
+          for (const [field, msgs] of Object.entries(errorData)) {
+            if (Array.isArray(msgs)) {
+              errors.push(`${field}: ${msgs.join(', ')}`);
+            } else {
+              errors.push(`${field}: ${msgs}`);
+            }
+          }
+          message = errors.length > 0 ? errors.join('\n') : 'Registration failed';
+        }
+      }
+      
       toast.error(message);
       throw error;
     }

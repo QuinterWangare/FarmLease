@@ -30,25 +30,27 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const data = await authService.login(email, password);
-      setUser(data.user);
+      const currentUser = authService.getCurrentUser();
+      setUser(currentUser);
       
-      // Redirect based on role
-      const role = data.user.role;
-      switch (role) {
-        case 'OWNER':
-          navigate('/owner/dashboard');
-          break;
-        case 'LESSEE':
-          navigate('/lessee/dashboard');
-          break;
-        case 'DEALER':
-          navigate('/dealer/dashboard');
-          break;
-        case 'ADMIN':
-          navigate('/admin/dashboard');
-          break;
-        default:
-          navigate('/');
+      // Redirect based on role and is_staff
+      if (currentUser.is_staff) {
+        navigate('/admin/dashboard');
+      } else {
+        const role = currentUser.role;
+        switch (role) {
+          case 'landowner':
+            navigate('/owner/dashboard');
+            break;
+          case 'farmer':
+            navigate('/lessee/dashboard');
+            break;
+          case 'dealer':
+            navigate('/dealer/dashboard');
+            break;
+          default:
+            navigate('/');
+        }
       }
       
       toast.success('Login successful!');
@@ -67,7 +69,30 @@ export const AuthProvider = ({ children }) => {
       navigate('/login');
       return data;
     } catch (error) {
-      const message = error.response?.data?.message || 'Registration failed';
+      console.error('Registration error details:', error.response?.data);
+      // Handle validation errors from backend
+      const errorData = error.response?.data;
+      let message = 'Registration failed';
+      
+      if (errorData) {
+        if (typeof errorData === 'string') {
+          message = errorData;
+        } else if (errorData.message) {
+          message = errorData.message;
+        } else {
+          // Handle field-specific errors
+          const errors = [];
+          for (const [field, msgs] of Object.entries(errorData)) {
+            if (Array.isArray(msgs)) {
+              errors.push(`${field}: ${msgs.join(', ')}`);
+            } else {
+              errors.push(`${field}: ${msgs}`);
+            }
+          }
+          message = errors.length > 0 ? errors.join('\n') : 'Registration failed';
+        }
+      }
+      
       toast.error(message);
       throw error;
     }
@@ -92,6 +117,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     isAuthenticated: !!user,
     userRole: user?.role || null,
+    isStaff: user?.is_staff || false,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 
 // Public Pages
@@ -13,9 +13,7 @@ import AddLandPage from './pages/Farm-Owner/AddLandPage';
 
 // Lessee Pages
 import LesseeDashboard from './pages/Lessee/LesseeDashboard';
-import BrowseLandsPage from './pages/Lessee/BrowseLandsPage';
-import LandDetailPage from './pages/Lessee/LandDetailPage';
-import CropRecommendationPage from './pages/Lessee/CropRecommendationPage';
+import FindLandPage from './pages/Lessee/FindLandPage';
 
 // Dealer Pages
 import DealerDashboard from './pages/Agro-Dealer/DealerDashboard';
@@ -35,8 +33,11 @@ function App() {
     <Router>
       <AuthProvider>
         <Routes>
+          {/* DEVELOPMENT: Redirect root to lessee dashboard */}
+          <Route path="/" element={<Navigate to="/lessee/dashboard" replace />} />
+          
           {/* Public Routes */}
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/landing" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
@@ -79,26 +80,11 @@ function App() {
             path="/lessee/browse"
             element={
               <ProtectedRoute allowedRoles={['LESSEE']}>
-                <BrowseLandsPage />
+                <FindLandPage />
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/lessee/lands/:id"
-            element={
-              <ProtectedRoute allowedRoles={['LESSEE']}>
-                <LandDetailPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/lessee/recommendations"
-            element={
-              <ProtectedRoute allowedRoles={['LESSEE']}>
-                <CropRecommendationPage />
-              </ProtectedRoute>
-            }
-          />
+
 
           {/* Agro-Dealer Routes */}
           <Route

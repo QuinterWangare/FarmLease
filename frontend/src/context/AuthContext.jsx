@@ -14,15 +14,28 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  // DEVELOPMENT MODE: Set mock user to bypass authentication
+  const DEVELOPMENT_MODE = true; // Set to false when backend is ready
+  
+  const mockUser = {
+    id: 1,
+    name: 'David M.',
+    email: 'david@farmlease.com',
+    role: 'LESSEE',
+    phone_number: '+254712345678',
+  };
+
+  const [user, setUser] = useState(DEVELOPMENT_MODE ? mockUser : null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     // Check if user is logged in on mount
-    const currentUser = authService.getCurrentUser();
-    if (currentUser) {
-      setUser(currentUser);
+    if (!DEVELOPMENT_MODE) {
+      const currentUser = authService.getCurrentUser();
+      if (currentUser) {
+        setUser(currentUser);
+      }
     }
     setLoading(false);
   }, []);

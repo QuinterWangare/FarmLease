@@ -4,6 +4,9 @@ import Spinner from './Spinner';
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   const { user, loading } = useAuth();
+  
+  // DEVELOPMENT MODE: Bypass auth check
+  const DEVELOPMENT_MODE = true; // Set to false when backend is ready
 
   if (loading) {
     return (
@@ -13,7 +16,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
     );
   }
 
-  if (!user) {
+  if (!user && !DEVELOPMENT_MODE) {
     return <Navigate to="/login" replace />;
   }
 

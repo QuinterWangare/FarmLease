@@ -3,7 +3,22 @@ import { useAuth } from '../../context/AuthContext';
 import Button from '../common/Button';
 
 const Navbar = () => {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout, isStaff } = useAuth();
+
+  // Format role for display
+  const getRoleDisplay = (role, isAdmin) => {
+    if (isAdmin) return 'Admin';
+    switch (role) {
+      case 'OWNER':
+        return 'Farm Owner';
+      case 'LESSEE':
+        return 'Farmer/Lessee';
+      case 'DEALER':
+        return 'Agro-Dealer';
+      default:
+        return role;
+    }
+  };
 
   return (
     <nav className="bg-white shadow-md">
@@ -21,9 +36,14 @@ const Navbar = () => {
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
               <>
-                <span className="text-gray-700">
-                  Welcome, <span className="font-medium">{user?.name || user?.email}</span>
-                </span>
+                <div className="flex flex-col items-end">
+                  <span className="text-gray-700">
+                    Welcome, <span className="font-medium">{user?.username || user?.email}</span>
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    {getRoleDisplay(user?.role, isStaff)}
+                  </span>
+                </div>
                 <Button variant="outline" size="sm" onClick={logout}>
                   Logout
                 </Button>

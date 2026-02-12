@@ -10,6 +10,11 @@ import RegisterPage from './pages/auth/RegisterPage';
 import OwnerDashboard from './pages/Farm-Owner/FarmOwnerDashboard';
 import MyLandsPage from './pages/Farm-Owner/MyLandsPage';
 import AddLandPage from './pages/Farm-Owner/AddLandPage';
+import EscrowStatusPage from './pages/Farm-Owner/EscrowStatusPage';
+import FinancialsPage from './pages/Farm-Owner/FinancialsPage';
+import ProfileSettingsPage from './pages/Farm-Owner/ProfileSettingsPage';
+import LeaseRequestsPage from './pages/Farm-Owner/LeaseRequestsPageWeb';
+import AgreementsPage from './pages/Farm-Owner/AgreementsPage';
 
 // Lessee Pages
 import LesseeDashboard from './pages/Lessee/LesseeDashboard';
@@ -29,6 +34,8 @@ import UsersListPage from './pages/admin/UsersListPage';
 import ProtectedRoute from './components/common/ProtectedRoute';
 
 function App() {
+  const isDev = import.meta.env.VITE_DEV_MODE === 'true';
+  
   return (
     <Router>
       <AuthProvider>
@@ -42,6 +49,10 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
 
           {/* Farm Owner Routes */}
+          <Route
+            path="/owner"
+            element={<Navigate to="/owner/dashboard" replace />}
+          />
           <Route
             path="/owner/dashboard"
             element={
@@ -66,8 +77,52 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/owner/lease-requests"
+            element={
+              <ProtectedRoute allowedRoles={['OWNER']}>
+                <LeaseRequestsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/owner/financials"
+            element={
+              <ProtectedRoute allowedRoles={['OWNER']}>
+                <FinancialsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/owner/escrow"
+            element={
+              <ProtectedRoute allowedRoles={['OWNER']}>
+                <EscrowStatusPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/owner/agreements"
+            element={
+              <ProtectedRoute allowedRoles={['OWNER']}>
+                <AgreementsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/owner/profile"
+            element={
+              <ProtectedRoute allowedRoles={['OWNER']}>
+                <ProfileSettingsPage />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Lessee Routes */}
+          <Route
+            path="/lessee"
+            element={<Navigate to="/lessee/dashboard" replace />}
+          />
           <Route
             path="/lessee/dashboard"
             element={
@@ -87,6 +142,10 @@ function App() {
 
 
           {/* Agro-Dealer Routes */}
+          <Route
+            path="/dealer"
+            element={<Navigate to="/dealer/dashboard" replace />}
+          />
           <Route
             path="/dealer/dashboard"
             element={
@@ -114,9 +173,13 @@ function App() {
 
           {/* Admin Routes */}
           <Route
+            path="/admin"
+            element={<Navigate to="/admin/dashboard" replace />}
+          />
+          <Route
             path="/admin/dashboard"
             element={
-              <ProtectedRoute allowedRoles={['ADMIN']}>
+              <ProtectedRoute requireAdmin={true}>
                 <AdminDashboard />
               </ProtectedRoute>
             }
@@ -124,7 +187,7 @@ function App() {
           <Route
             path="/admin/lands/pending"
             element={
-              <ProtectedRoute allowedRoles={['ADMIN']}>
+              <ProtectedRoute requireAdmin={true}>
                 <PendingLandsPage />
               </ProtectedRoute>
             }
@@ -132,7 +195,7 @@ function App() {
           <Route
             path="/admin/users"
             element={
-              <ProtectedRoute allowedRoles={['ADMIN']}>
+              <ProtectedRoute requireAdmin={true}>
                 <UsersListPage />
               </ProtectedRoute>
             }

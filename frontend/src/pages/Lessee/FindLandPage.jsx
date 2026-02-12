@@ -18,19 +18,130 @@ import {
   Heart,
   MapPin,
   ArrowRight,
-  Sprout
+  Sprout,
+  Menu
 } from 'lucide-react';
 import { useState } from 'react';
 
 const FindLandPage = () => {
   const { user, logout } = useAuth();
-  const [selectedRegions, setSelectedRegions] = useState(['Rift Valley', 'Central Kenya']);
-  const [selectedCrops, setSelectedCrops] = useState(['Maize']);
-  const [minAcres, setMinAcres] = useState(5);
-  const [maxAcres, setMaxAcres] = useState(50);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [selectedRegions, setSelectedRegions] = useState([]);
+  const [selectedCrops, setSelectedCrops] = useState([]);
+  const [minAcres, setMinAcres] = useState(0);
+  const [maxAcres, setMaxAcres] = useState(100);
+  const [soilType, setSoilType] = useState('Any Soil Type');
+  const [customCropInput, setCustomCropInput] = useState('');
+  const [showCustomCropInput, setShowCustomCropInput] = useState(false);
+  const [filterApplied, setFilterApplied] = useState(false);
+  
+  // Region autocomplete states
+  const [regionInput, setRegionInput] = useState('');
+  const [showRegionSuggestions, setShowRegionSuggestions] = useState(false);
+  
+  // Crop autocomplete states
+  const [showCropSuggestions, setShowCropSuggestions] = useState(false);
+  
+  // Header search autocomplete states
+  const [searchInput, setSearchInput] = useState('');
+  const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
 
-  const regions = ['Rift Valley', 'Central Kenya', 'Coastal Region', 'Eastern', 'Western'];
+  // Available options for suggestions - Comprehensive Kenyan Locations
+  const availableRegions = [
+    // Major Regions
+    'Rift Valley', 'Central Kenya', 'Coastal Region', 'Eastern Region', 'Western Region',
+    'Nyanza Region', 'North Eastern Region', 'Mount Kenya Region', 'Lake Victoria Basin',
+    
+    // All 47 Counties
+    'Nairobi', 'Mombasa', 'Kisumu', 'Nakuru', 'Eldoret', 'Naivasha',
+    'Kiambu', 'Thika', 'Nyeri', 'Nanyuki', 'Meru', 'Embu', 'Kirinyaga',
+    'Murang\'a', 'Laikipia', 'Nyandarua', 'Makueni', 'Machakos', 'Kitui',
+    'Kakamega', 'Bungoma', 'Busia', 'Vihiga', 'Kisii', 'Nyamira',
+    'Migori', 'Homa Bay', 'Siaya', 'Garissa', 'Wajir', 'Mandera',
+    'Marsabit', 'Isiolo', 'Samburu', 'Turkana', 'West Pokot',
+    'Trans Nzoia', 'Uasin Gishu', 'Elgeyo Marakwet', 'Nandi', 'Baringo',
+    'Narok', 'Kajiado', 'Kericho', 'Bomet', 'Kwale', 'Kilifi',
+    'Tana River', 'Lamu', 'Taita Taveta',
+    
+    // Major Sub-Counties and Towns
+    'Ruiru', 'Limuru', 'Kikuyu', 'Juja', 'Gatundu', 'Githunguri',
+    'Kangema', 'Kiharu', 'Mathira', 'Mukurweini', 'Othaya', 'Tetu',
+    'Tigania', 'Igembe', 'Imenti', 'Gichugu', 'Ndia', 'Mwea',
+    'Mumias', 'Lugari', 'Malava', 'Teso', 'Malaba', 'Butere',
+    'Rachuonyo', 'Gucha', 'Kitutu', 'Rongo', 'Awendo', 'Uriri',
+    'Narok South', 'Narok North', 'Transmara', 'Kajiado North', 'Kajiado South',
+    'Kuresoi', 'Molo', 'Rongai', 'Subukia', 'Gilgil', 'Njoro',
+    'Londiani', 'Kipkelion', 'Sotik', 'Konoin', 'Bureti',
+    'Mwingi', 'Mutomo', 'Kibwezi', 'Wote', 'Kathiani', 'Kangundo',
+    'Yatta', 'Tharaka', 'Mbeere', 'Runyenjes', 'Chuka'
+  ];
+  
+  const availableCrops = [
+    // Cereals
+    'Maize', 'Wheat', 'Rice', 'Sorghum', 'Millet', 'Barley', 'Oats',
+    
+    // Legumes
+    'Beans', 'Peas', 'Green Grams', 'Cowpeas', 'Pigeon Peas', 'Lentils', 'Chickpeas',
+    
+    // Root Crops
+    'Potatoes', 'Sweet Potatoes', 'Cassava', 'Arrowroots', 'Yams',
+    
+    // Vegetables
+    'Cabbage', 'Kale (Sukuma Wiki)', 'Spinach', 'Tomatoes', 'Onions', 'Carrots',
+    'Capsicum', 'Cauliflower', 'Broccoli', 'Lettuce', 'Cucumber', 'Pumpkin',
+    'Zucchini', 'Eggplant', 'Green Beans', 'Snow Peas', 'Beetroot', 'Leeks',
+    
+    // Fruits
+    'Avocado', 'Mangoes', 'Bananas', 'Oranges', 'Pineapples', 'Passion Fruit',
+    'Watermelon', 'Papaya', 'Guava', 'Apples', 'Strawberries', 'Tree Tomatoes',
+    'Grapes', 'Melons', 'Lemons', 'Tangerines',
+    
+    // Cash Crops
+    'Coffee', 'Tea', 'Sugarcane', 'Cotton', 'Pyrethrum', 'Tobacco', 'Macadamia',
+    'Cashew Nuts', 'Coconuts', 'Sisal', 'Sunflower',
+    
+    // Herbs & Spices
+    'Chili', 'Ginger', 'Garlic', 'Coriander', 'Basil', 'Mint',
+    
+    // Other
+    'Groundnuts', 'Bambara Nuts', 'Sesame', 'French Beans', 'Runner Beans',
+    'Snap Peas', 'Baby Corn', 'Fodder Crops', 'Napier Grass', 'Rhodes Grass'
+  ];
+  
   const aiRecommendedCrops = ['Maize', 'Wheat', 'Avocado'];
+  
+  // Comprehensive search suggestions (locations + crops + features)
+  const searchKeywords = [
+    // Soil Types
+    'Loam Soil', 'Volcanic Soil', 'Red Clay', 'Sandy Loam', 'Black Cotton Soil',
+    'Clay Soil', 'Alluvial Soil', 'Laterite Soil',
+    
+    // Water Sources
+    'River Water', 'Borehole', 'Dam', 'Piped Water', 'Rain Fed', 'Irrigation',
+    'Well Water', 'Spring Water',
+    
+    // Terrain
+    'Flat Land', 'Gentle Slope', 'Hilly', 'Valley', 'Highland', 'Lowland',
+    
+    // Land Features
+    'Fenced', 'Title Deed', 'Access Road', 'Electricity', 'Near Market',
+    'Water Access', 'Fertile Land', 'Virgin Land', 'Previously Farmed',
+    
+    // Farm Types
+    'Dairy Farm', 'Poultry Farm', 'Mixed Farming', 'Horticulture',
+    'Commercial Farm', 'Subsistence Farm', 'Greenhouse Ready',
+    
+    // Size Categories
+    'Small Scale (1-5 acres)', 'Medium Scale (5-20 acres)', 
+    'Large Scale (20+ acres)', 'Smallholder', 'Commercial Scale'
+  ];
+  
+  // Combine all search options
+  const allSearchOptions = [
+    ...availableRegions.map(r => ({ type: 'location', value: r })),
+    ...availableCrops.map(c => ({ type: 'crop', value: c })),
+    ...searchKeywords.map(k => ({ type: 'feature', value: k }))
+  ];
 
   const lands = [
     {
@@ -94,6 +205,36 @@ const FindLandPage = () => {
     }
   ];
 
+  // Filter regions based on input
+  const getRegionSuggestions = () => {
+    if (!regionInput.trim()) return [];
+    return availableRegions.filter(region => 
+      region.toLowerCase().includes(regionInput.toLowerCase()) &&
+      !selectedRegions.includes(region)
+    );
+  };
+  
+  // Filter crops based on input
+  const getCropSuggestions = () => {
+    if (!customCropInput.trim()) return [];
+    return availableCrops.filter(crop => 
+      crop.toLowerCase().includes(customCropInput.toLowerCase()) &&
+      !selectedCrops.includes(crop)
+    );
+  };
+  
+  const addRegion = (region) => {
+    if (!selectedRegions.includes(region)) {
+      setSelectedRegions([...selectedRegions, region]);
+      setRegionInput('');
+      setShowRegionSuggestions(false);
+    }
+  };
+  
+  const removeRegion = (region) => {
+    setSelectedRegions(selectedRegions.filter(r => r !== region));
+  };
+
   const toggleRegion = (region) => {
     setSelectedRegions(prev => 
       prev.includes(region) 
@@ -112,17 +253,93 @@ const FindLandPage = () => {
     setSelectedCrops(selectedCrops.filter(c => c !== crop));
   };
 
+  const handleAddCustomCrop = (cropName = customCropInput) => {
+    const trimmedCrop = cropName.trim();
+    if (trimmedCrop && !selectedCrops.includes(trimmedCrop)) {
+      setSelectedCrops([...selectedCrops, trimmedCrop]);
+      setCustomCropInput('');
+      setShowCustomCropInput(false);
+      setShowCropSuggestions(false);
+    }
+  };
+
+  // Get search suggestions
+  const getSearchSuggestions = () => {
+    if (!searchInput.trim()) return [];
+    return allSearchOptions.filter(option => 
+      option.value.toLowerCase().includes(searchInput.toLowerCase())
+    ).slice(0, 8); // Limit to 8 suggestions
+  };
+  
+  const handleSearchSelect = (value, type) => {
+    setSearchInput(value);
+    setShowSearchSuggestions(false);
+    // Apply search filter based on type
+    if (type === 'location' && !selectedRegions.includes(value)) {
+      setSelectedRegions([...selectedRegions, value]);
+    } else if (type === 'crop' && !selectedCrops.includes(value)) {
+      setSelectedCrops([...selectedCrops, value]);
+    }
+    // For features, just set the search (will be used when backend is ready)
+    console.log('Search applied:', { query: value, type });
+  };
+
+  const handleReset = () => {
+    setSelectedRegions([]);
+    setSelectedCrops([]);
+    setMinAcres(0);
+    setMaxAcres(100);
+    setSoilType('Any Soil Type');
+    setFilterApplied(false);
+    setRegionInput('');
+    setCustomCropInput('');
+    setSearchInput('');
+    setShowRegionSuggestions(false);
+    setShowCropSuggestions(false);
+    setShowSearchSuggestions(false);
+  };
+
+  const handleUpdateResults = () => {
+    setFilterApplied(true);
+    // In the future, this will trigger an API call with the filter parameters
+    console.log('Filters Applied:', {
+      regions: selectedRegions,
+      crops: selectedCrops,
+      minAcres,
+      maxAcres,
+      soilType
+    });
+  };
+
   return (
-    <div className="bg-background-light min-h-screen flex">
+    <div className="bg-background-light min-h-screen flex relative">
+      {/* Mobile Overlay */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-20 lg:w-64 bg-forest-green h-screen flex flex-col justify-between py-6 px-4 lg:px-6 shadow-xl z-20 transition-all duration-300 border-r border-white/5 relative shrink-0 sticky top-0">
+      <aside className={`fixed lg:sticky top-0 w-64 bg-forest-green h-screen flex flex-col justify-between py-6 px-6 shadow-xl z-40 transition-transform duration-300 border-r border-white/5 ${
+        isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+      }`}>
         <div>
+          {/* Close Button - Mobile Only */}
+          <button
+            onClick={() => setIsSidebarOpen(false)}
+            className="lg:hidden absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+          >
+            <X size={24} />
+          </button>
+
           {/* Logo */}
           <div className="flex items-center gap-3 mb-10 px-2 mt-2">
             <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(19,236,128,0.2)]">
               <Sprout className="text-forest-green" size={24} />
             </div>
-            <div className="hidden lg:block">
+            <div>
               <h1 className="text-xl font-bold text-white tracking-tight leading-none font-serif">
                 Farm<span className="text-gray-300 font-normal font-display">Lease</span>
               </h1>
@@ -132,30 +349,30 @@ const FindLandPage = () => {
 
           {/* Navigation */}
           <nav className="space-y-1">
-            <Link to="/lessee/dashboard" className="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-all group">
+            <Link to="/lessee/dashboard" onClick={() => setIsSidebarOpen(false)} className="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-all group">
               <LayoutDashboard size={20} className="group-hover:scale-110 transition-transform" />
-              <span className="font-medium hidden lg:block text-sm">Dashboard</span>
+              <span className="font-medium text-sm">Dashboard</span>
             </Link>
-            <Link to="/lessee/browse" className="flex items-center gap-4 px-4 py-3 bg-white/10 text-white rounded-lg transition-all group shadow-sm backdrop-blur-sm">
+            <Link to="/lessee/browse" onClick={() => setIsSidebarOpen(false)} className="flex items-center gap-4 px-4 py-3 bg-white/10 text-white rounded-lg transition-all group shadow-sm backdrop-blur-sm">
               <Map size={20} className="group-hover:scale-110 transition-transform" />
-              <span className="font-medium hidden lg:block text-sm">Find Land</span>
+              <span className="font-medium text-sm">Find Land</span>
             </Link>
             <div className="flex items-center gap-4 px-4 py-3 text-gray-400 opacity-50 rounded-lg cursor-not-allowed">
               <Brain size={20} />
-              <span className="font-medium hidden lg:block text-sm">AI Predictor</span>
-              <span className="hidden lg:flex ml-auto bg-primary/20 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold">NEW</span>
+              <span className="font-medium text-sm">AI Predictor</span>
+              <span className="ml-auto bg-primary/20 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold">NEW</span>
             </div>
             <div className="flex items-center gap-4 px-4 py-3 text-gray-400 opacity-50 rounded-lg cursor-not-allowed">
               <Store size={20} />
-              <span className="font-medium hidden lg:block text-sm">Agro-Dealer Shop</span>
+              <span className="font-medium text-sm">Agro-Dealer Shop</span>
             </div>
             <div className="flex items-center gap-4 px-4 py-3 text-gray-400 opacity-50 rounded-lg cursor-not-allowed">
               <FolderOpen size={20} />
-              <span className="font-medium hidden lg:block text-sm">My Leases</span>
+              <span className="font-medium text-sm">My Leases</span>
             </div>
             <div className="flex items-center gap-4 px-4 py-3 text-gray-400 opacity-50 rounded-lg cursor-not-allowed">
               <Wallet size={20} />
-              <span className="font-medium hidden lg:block text-sm">Financials</span>
+              <span className="font-medium text-sm">Financials</span>
             </div>
           </nav>
         </div>
@@ -168,7 +385,7 @@ const FindLandPage = () => {
               alt="User profile" 
               className="w-10 h-10 rounded-full object-cover border-2 border-primary/20"
             />
-            <div className="hidden lg:block overflow-hidden">
+            <div className="overflow-hidden">
               <p className="text-sm font-semibold text-white">David M.</p>
               <p className="text-[10px] text-gray-400 truncate uppercase tracking-wider">Premium Lessee</p>
             </div>
@@ -179,7 +396,7 @@ const FindLandPage = () => {
             className="flex items-center gap-3 px-2 py-1 text-gray-400 hover:text-white transition-all w-full group pl-3"
           >
             <LogOut size={18} className="group-hover:-translate-x-1 transition-transform" />
-            <span className="font-medium hidden lg:block text-xs uppercase tracking-wide">Logout</span>
+            <span className="font-medium text-xs uppercase tracking-wide">Logout</span>
           </button>
         </div>
       </aside>
@@ -187,21 +404,65 @@ const FindLandPage = () => {
       {/* Main Content */}
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Header */}
-        <header className="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-8 flex-shrink-0 z-10">
-          <div>
-            <h2 className="text-3xl font-display font-bold text-gray-900">Find Land</h2>
-            <p className="text-xs text-gray-500 mt-1">Browse available leasing opportunities matched to your preferences</p>
+        <header className="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-8 flex-shrink-0 z-10">
+          <div className="flex items-center gap-4">
+            {/* Hamburger Menu Button - Mobile Only */}
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="lg:hidden text-forest-green p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <Menu size={24} />
+            </button>
+            <div>
+              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">Find Land</h2>
+              <p className="text-xs text-gray-500 mt-1 hidden sm:block">Browse available leasing opportunities matched to your preferences</p>
+            </div>
           </div>
-          <div className="flex items-center space-x-6">
-            <div className="relative w-80">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+          <div className="flex items-center gap-2 lg:gap-6">
+            <div className="relative w-64 lg:w-80 hidden md:block">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 z-10" size={20} />
               <input 
+                value={searchInput}
+                onChange={(e) => {
+                  setSearchInput(e.target.value);
+                  setShowSearchSuggestions(true);
+                }}
+                onFocus={() => setShowSearchSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
                 className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-dark/20 focus:border-primary-dark transition-colors text-gray-700 placeholder-gray-400" 
-                placeholder="Search location or keyword..." 
+                placeholder="Search location, crop, or keyword..." 
                 type="text"
               />
+              
+              {/* Search Suggestions Dropdown */}
+              {showSearchSuggestions && getSearchSuggestions().length > 0 && (
+                <div className="absolute z-20 w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl max-h-80 overflow-y-auto">
+                  {getSearchSuggestions().map((option, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleSearchSelect(option.value, option.type)}
+                      className="w-full text-left px-4 py-3 hover:bg-emerald-50 transition-colors border-b border-gray-100 last:border-b-0 group"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-700 group-hover:text-primary-dark font-medium">
+                          {option.value}
+                        </span>
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
+                          option.type === 'location' 
+                            ? 'bg-blue-100 text-blue-700' 
+                            : option.type === 'crop'
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-amber-100 text-amber-700'
+                        }`}>
+                          {option.type === 'location' ? '📍 Location' : option.type === 'crop' ? '🌾 Crop' : '⚡ Feature'}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-            <button className="relative p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors">
+            <button className="relative p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors hidden sm:block">
               <Bell size={20} />
               <span className="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
             </button>
@@ -212,11 +473,16 @@ const FindLandPage = () => {
           {/* Filter Sidebar */}
           <aside className="w-80 bg-white border-r border-gray-200 overflow-y-auto p-6 flex flex-col gap-8">
             <div className="flex items-center justify-between">
-              <h3 className="font-display font-bold text-gray-800 flex items-center gap-2 text-lg">
+              <h3 className="font-bold text-gray-800 flex items-center gap-2 text-lg">
                 <Sliders className="text-primary-dark" size={20} />
                 Farm Preferences
               </h3>
-              <button className="text-xs font-semibold text-primary-dark hover:text-emerald-700">Reset</button>
+              <button 
+                onClick={handleReset}
+                className="text-xs font-semibold text-primary-dark hover:text-emerald-700 transition-colors"
+              >
+                Reset
+              </button>
             </div>
             <p className="text-xs text-gray-500 -mt-4 leading-relaxed">
               Adjust these settings to filter the land listings automatically.
@@ -225,17 +491,53 @@ const FindLandPage = () => {
             {/* Preferred Regions */}
             <div className="space-y-3">
               <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-2">Preferred Regions</label>
-              {regions.map(region => (
-                <label key={region} className="flex items-center space-x-3 cursor-pointer group">
-                  <input 
-                    checked={selectedRegions.includes(region)}
-                    onChange={() => toggleRegion(region)}
-                    className="w-5 h-5 rounded border-gray-300 text-primary-dark focus:ring-primary-dark/20" 
-                    type="checkbox"
-                  />
-                  <span className="text-sm text-gray-700 group-hover:text-primary-dark transition-colors">{region}</span>
-                </label>
-              ))}
+              
+              {/* Selected Regions */}
+              <div className="flex flex-wrap gap-2 mb-3">
+                {selectedRegions.length === 0 ? (
+                  <p className="text-xs text-gray-400 italic">No regions selected yet. Start typing below to add regions.</p>
+                ) : (
+                  selectedRegions.map(region => (
+                    <div key={region} className="inline-flex items-center bg-emerald-50 text-primary-dark px-3 py-1.5 rounded-full text-xs font-medium border border-emerald-200/50">
+                      {region}
+                      <button onClick={() => removeRegion(region)} className="ml-1.5 hover:text-emerald-800">
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+              
+              {/* Region Input with Autocomplete */}
+              <div className="relative">
+                <input
+                  type="text"
+                  value={regionInput}
+                  onChange={(e) => {
+                    setRegionInput(e.target.value);
+                    setShowRegionSuggestions(true);
+                  }}
+                  onFocus={() => setShowRegionSuggestions(true)}
+                  onBlur={() => setTimeout(() => setShowRegionSuggestions(false), 200)}
+                  placeholder="Type to add region (e.g., Rift Valley)..."
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-dark/20 focus:border-primary-dark"
+                />
+                
+                {/* Suggestions Dropdown */}
+                {showRegionSuggestions && getRegionSuggestions().length > 0 && (
+                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                    {getRegionSuggestions().map(region => (
+                      <button
+                        key={region}
+                        onClick={() => addRegion(region)}
+                        className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-primary-dark transition-colors border-b border-gray-100 last:border-b-0"
+                      >
+                        {region}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* AI Recommended Crops */}
@@ -249,7 +551,13 @@ const FindLandPage = () => {
               </div>
               <div className="bg-gradient-to-br from-amber-50/50 to-orange-50/50 rounded-xl p-3 border border-amber-100">
                 <p className="text-[10px] text-gray-500 mb-2.5">
-                  Based on soil data & climate history for <span className="font-semibold text-earth-brown">Rift Valley & Central</span>:
+                  {selectedRegions.length > 0 ? (
+                    <>
+                      Based on soil data & climate history for <span className="font-semibold text-earth-brown">{selectedRegions.join(', ')}</span>:
+                    </>
+                  ) : (
+                    'Select preferred regions above to get AI-powered crop recommendations'
+                  )}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {aiRecommendedCrops.map(crop => (
@@ -268,6 +576,9 @@ const FindLandPage = () => {
               <div className="pt-2">
                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-2">My Selection</label>
                 <div className="flex flex-wrap gap-2">
+                  {selectedCrops.length === 0 && !showCustomCropInput && (
+                    <p className="text-xs text-gray-400 italic mb-2 w-full">No crops selected. Click "Custom Crop" or AI recommendations above to add crops.</p>
+                  )}
                   {selectedCrops.map(crop => (
                     <div key={crop} className="inline-flex items-center bg-emerald-50 text-primary-dark px-3 py-1.5 rounded-full text-xs font-medium border border-emerald-200/50">
                       {crop}
@@ -276,9 +587,64 @@ const FindLandPage = () => {
                       </button>
                     </div>
                   ))}
-                  <button className="inline-flex items-center bg-gray-50 text-earth-brown px-3 py-1.5 rounded-full text-xs font-medium hover:bg-gray-100 transition-colors border border-earth-brown/20 border-dashed">
-                    <Plus size={14} className="mr-1" /> Custom Crop
-                  </button>
+                  {!showCustomCropInput ? (
+                    <button 
+                      onClick={() => setShowCustomCropInput(true)}
+                      className="inline-flex items-center bg-gray-50 text-earth-brown px-3 py-1.5 rounded-full text-xs font-medium hover:bg-gray-100 transition-colors border border-earth-brown/20 border-dashed"
+                    >
+                      <Plus size={14} className="mr-1" /> Custom Crop
+                    </button>
+                  ) : (
+                    <div className="relative w-full mt-2">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={customCropInput}
+                          onChange={(e) => {
+                            setCustomCropInput(e.target.value);
+                            setShowCropSuggestions(true);
+                          }}
+                          onFocus={() => setShowCropSuggestions(true)}
+                          onBlur={() => setTimeout(() => setShowCropSuggestions(false), 200)}
+                          onKeyPress={(e) => e.key === 'Enter' && handleAddCustomCrop()}
+                          placeholder="Type crop name (e.g., rice, wheat)..."
+                          autoFocus
+                          className="flex-1 px-3 py-1.5 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-dark/20 focus:border-primary-dark"
+                        />
+                        <button
+                          onClick={() => handleAddCustomCrop()}
+                          className="px-3 py-1.5 bg-primary-dark text-white text-xs rounded-lg hover:bg-emerald-700 transition-colors"
+                        >
+                          Add
+                        </button>
+                        <button
+                          onClick={() => {
+                            setShowCustomCropInput(false);
+                            setCustomCropInput('');
+                            setShowCropSuggestions(false);
+                          }}
+                          className="p-1.5 text-gray-400 hover:text-gray-600"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                      
+                      {/* Crop Suggestions Dropdown */}
+                      {showCropSuggestions && getCropSuggestions().length > 0 && (
+                        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                          {getCropSuggestions().map(crop => (
+                            <button
+                              key={crop}
+                              onClick={() => handleAddCustomCrop(crop)}
+                              className="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-emerald-50 hover:text-primary-dark transition-colors border-b border-gray-100 last:border-b-0"
+                            >
+                              {crop}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -286,19 +652,64 @@ const FindLandPage = () => {
             {/* Target Acreage */}
             <div className="space-y-4">
               <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Target Acreage</label>
+              
+              {/* Visual Range Display */}
               <div className="relative pt-1 pb-2">
                 <div className="h-1.5 bg-gray-200 rounded-full w-full"></div>
-                <div className="absolute top-1 left-[10%] right-[30%] h-1.5 bg-emerald-200 rounded-full"></div>
-                <div className="absolute top-[0px] left-[45%] w-4 h-4 bg-white border-2 border-primary-dark rounded-full shadow cursor-pointer transform hover:scale-110 transition-transform"></div>
+                <div 
+                  className="absolute top-1 h-1.5 bg-emerald-200 rounded-full"
+                  style={{
+                    left: `${minAcres}%`,
+                    right: `${100 - maxAcres}%`
+                  }}
+                ></div>
               </div>
+              
+              {/* Range Sliders */}
+              <div className="space-y-3">
+                <div>
+                  <label className="text-[10px] text-gray-400 block mb-2">Min Acres: {minAcres}</label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={minAcres}
+                    onChange={(e) => {
+                      const value = Number(e.target.value);
+                      if (value <= maxAcres) {
+                        setMinAcres(value);
+                      }
+                    }}
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary-dark"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] text-gray-400 block mb-2">Max Acres: {maxAcres}</label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={maxAcres}
+                    onChange={(e) => {
+                      const value = Number(e.target.value);
+                      if (value >= minAcres) {
+                        setMaxAcres(value);
+                      }
+                    }}
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary-dark"
+                  />
+                </div>
+              </div>
+              
               <div className="flex items-center justify-between gap-4">
                 <div className="w-full">
                   <label className="text-[10px] text-gray-400 block mb-1">Min (Acres)</label>
                   <input 
                     className="w-full text-center py-1.5 px-2 text-sm border border-gray-200 bg-white rounded-lg text-gray-700 focus:border-primary-dark focus:ring-0" 
                     type="number" 
+                    min="0"
                     value={minAcres}
-                    onChange={(e) => setMinAcres(e.target.value)}
+                    onChange={(e) => setMinAcres(Number(e.target.value))}
                   />
                 </div>
                 <span className="text-gray-300 font-light">—</span>
@@ -307,8 +718,9 @@ const FindLandPage = () => {
                   <input 
                     className="w-full text-center py-1.5 px-2 text-sm border border-gray-200 bg-white rounded-lg text-gray-700 focus:border-primary-dark focus:ring-0" 
                     type="number" 
+                    min="0"
                     value={maxAcres}
-                    onChange={(e) => setMaxAcres(e.target.value)}
+                    onChange={(e) => setMaxAcres(Number(e.target.value))}
                   />
                 </div>
               </div>
@@ -318,25 +730,41 @@ const FindLandPage = () => {
             <div className="space-y-3 mb-6">
               <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Soil Type Preference</label>
               <div className="relative">
-                <select className="w-full appearance-none bg-gray-50 border border-gray-200 text-gray-700 py-2.5 px-4 rounded-xl text-sm focus:outline-none focus:border-primary-dark focus:ring-1 focus:ring-primary-dark cursor-pointer">
+                <select 
+                  value={soilType}
+                  onChange={(e) => setSoilType(e.target.value)}
+                  className="w-full appearance-none bg-gray-50 border border-gray-200 text-gray-700 py-2.5 px-4 rounded-xl text-sm focus:outline-none focus:border-primary-dark focus:ring-1 focus:ring-primary-dark cursor-pointer"
+                >
                   <option>Any Soil Type</option>
                   <option>Volcanic Loam</option>
-                  <option>Clay</option>
-                  <option>Sandy</option>
+                  <option>Red Clay</option>
+                  <option>Sandy Loam</option>
+                  <option>Black Cotton</option>
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-400" size={20} />
               </div>
             </div>
 
-            <button className="mt-auto w-full bg-primary-dark hover:bg-emerald-700 text-white font-medium py-3 rounded-xl shadow-lg shadow-forest-green/10 transition-colors">
-              Update Results
+            <button 
+              onClick={handleUpdateResults}
+              className="mt-auto w-full bg-primary-dark hover:bg-emerald-700 text-white font-medium py-3 rounded-xl shadow-lg shadow-forest-green/10 transition-all hover:shadow-xl active:scale-[0.98]"
+            >
+              {filterApplied ? '✓ Filters Applied' : 'Update Results'}
             </button>
           </aside>
 
           {/* Land Listings */}
           <div className="flex-1 bg-background-light p-8 overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-gray-800 font-display">14 Land Listings Found</h3>
+              <div>
+                <h3 className="text-lg font-bold text-gray-800">14 Land Listings Found</h3>
+                {filterApplied && (
+                  <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    Active filters applied
+                  </p>
+                )}
+              </div>
               <div className="flex items-center space-x-3">
                 <span className="text-sm text-gray-500">Sort by:</span>
                 <div className="relative group">
@@ -374,7 +802,7 @@ const FindLandPage = () => {
                     </span>
                   </div>
                   <div className={`${land.id === 1 ? 'pt-10' : 'pt-4'} px-5 pb-5 flex flex-col flex-1`}>
-                    <h4 className="font-display text-lg font-bold text-gray-900 mb-1">{land.name}</h4>
+                    <h4 className="text-lg font-bold text-gray-900 mb-1">{land.name}</h4>
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center text-xs text-gray-500 mt-1">
                         <MapPin size={14} className="mr-1" />

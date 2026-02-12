@@ -14,38 +14,37 @@ const authService = {
   },
 
   // Login
-  login: async (email, password) => {
-    console.log('Attempting login with:', { email, password: '***' });
-    try {
-      const response = await apiClient.post(API_ENDPOINTS.LOGIN, {
-        email,
-        password,
-      });
-      
-      if (response.data.access) {
-        localStorage.setItem('accessToken', response.data.access);
-        localStorage.setItem('refreshToken', response.data.refresh);
-        
-        // Decode token to get user info
-        const decodedToken = authService.decodeToken(response.data.access);
-        console.log('Decoded token:', decodedToken);
-        if (decodedToken) {
-          const user = {
+  login: async (email, password, rememberMe = false) => {
+    const response = await apiClient.post(API_ENDPOINTS.LOGIN, {
+      email,
+      password,
+    });
+
+    if (response.data.access) {
+      localStorage.setItem('accessToken', response.data.access);
+      localStorage.setItem('refreshToken', response.data.refresh);
+
+      const decodedToken = authService.decodeToken(response.data.access);
+      const user = response.data.user || (decodedToken
+        ? {
             id: decodedToken.user_id,
             email: decodedToken.email,
             role: decodedToken.role,
             is_staff: decodedToken.is_staff,
             username: decodedToken.username,
-          };
-          localStorage.setItem('user', JSON.stringify(user));
-        }
+          }
+        : null);
+
+      if (user) {
+        localStorage.setItem('user', JSON.stringify(user));
       }
-      
-      return response.data;
-    } catch (error) {
-      console.error('Login failed:', error.response?.data);
-      throw error;
+
+      if (rememberMe) {
+        localStorage.setItem('rememberMe', 'true');
+      }
     }
+
+    return response.data;
   },
 
   // Register
@@ -66,12 +65,55 @@ const authService = {
   // Logout
   logout: async () => {
     try {
-      await apiClient.post(API_ENDPOINTS.LOGOUT);
+      const refreshToken = localStorage.getItem('refreshToken');
+      if (refreshToken) {
+        await apiClient.post(API_ENDPOINTS.LOGOUT, { refresh: refreshToken });
+      }
     } finally {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('user');
+      authService.clearSession();
+      // Dispatch logout event for other tabs
+      window.dispatchEvent(new Event('auth-logout'));
     }
+  },
+
+  // Refresh access token
+  refreshToken: async () => {
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken) {
+      throw new Error('No refresh token available');
+    }
+
+    const response = await apiClient.post(API_ENDPOINTS.REFRESH_TOKEN, {
+      refresh: refreshToken,
+    });
+
+    if (response.data.access) {
+      localStorage.setItem('accessToken', response.data.access);
+      const decodedToken = authService.decodeToken(response.data.access);
+      if (decodedToken) {
+        const user = authService.getCurrentUser() || {};
+        const mergedUser = {
+          ...user,
+          id: decodedToken.user_id,
+          email: decodedToken.email,
+          role: decodedToken.role,
+          is_staff: decodedToken.is_staff,
+          username: decodedToken.username,
+        };
+        localStorage.setItem('user', JSON.stringify(mergedUser));
+      }
+      return response.data.access;
+    }
+
+    throw new Error('Failed to refresh token');
+  },
+
+  // Clear session data
+  clearSession: () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+    localStorage.removeItem('rememberMe');
   },
 
   // Get current user from localStorage or decode from token
@@ -109,7 +151,18 @@ const authService = {
     const user = authService.getCurrentUser();
     return user?.role || null;
   },
-  
+
+  // Update user data in localStorage
+  updateUser: (userData) => {
+    const currentUser = authService.getCurrentUser();
+    if (currentUser) {
+      const updatedUser = { ...currentUser, ...userData };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      return updatedUser;
+    }
+    return null;
+  },
+
   // Check if user is staff/admin
   isStaff: () => {
     const user = authService.getCurrentUser();

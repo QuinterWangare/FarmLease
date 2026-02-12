@@ -17,7 +17,7 @@ const PendingLandsPage = () => {
   return (
     <DashboardLayout sidebar={<Sidebar menuItems={menuItems} />}>
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Pending Land Verifications</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">Pending Land Verifications</h1>
 
         <Card>
           <div className="space-y-4">

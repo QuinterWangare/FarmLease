@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import authService from '../services/authService';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -14,33 +14,20 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  // DEVELOPMENT MODE: Set mock user to bypass authentication
-  const DEVELOPMENT_MODE = true; // Set to false when backend is ready
-  
-  const mockUser = {
-    id: 1,
-    name: 'David M.',
-    email: 'david@farmlease.com',
-    role: 'LESSEE',
-    phone_number: '+254712345678',
-  };
-
-  const [user, setUser] = useState(DEVELOPMENT_MODE ? mockUser : null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     // Check if user is logged in on mount
-    if (!DEVELOPMENT_MODE) {
-      const currentUser = authService.getCurrentUser();
-      if (currentUser) {
-        setUser(currentUser);
-      }
+    const currentUser = authService.getCurrentUser();
+    if (currentUser) {
+      setUser(currentUser);
     }
     setLoading(false);
   }, []);
 
-  const login = async (email, password) => {
+  const login = useCallback(async (email, password) => {
     try {
       const data = await authService.login(email, password);
       const currentUser = authService.getCurrentUser();
@@ -73,9 +60,9 @@ export const AuthProvider = ({ children }) => {
       toast.error(message);
       throw error;
     }
-  };
+  }, [navigate]);
 
-  const register = async (userData) => {
+  const register = useCallback(async (userData) => {
     try {
       const data = await authService.register(userData);
       toast.success('Registration successful! Please login.');
@@ -109,9 +96,9 @@ export const AuthProvider = ({ children }) => {
       toast.error(message);
       throw error;
     }
-  };
+  }, [navigate]);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       await authService.logout();
       setUser(null);
@@ -120,9 +107,10 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error('Logout error:', error);
     }
-  };
+  }, [navigate]);
 
-  const value = {
+  // Memoize the context value to prevent unnecessary re-renders
+  const value = useMemo(() => ({
     user,
     loading,
     login,
@@ -131,7 +119,7 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated: !!user,
     userRole: user?.role || null,
     isStaff: user?.is_staff || false,
-  };
+  }), [user, loading, login, register, logout]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

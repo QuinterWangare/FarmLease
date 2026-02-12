@@ -36,14 +36,13 @@ import UsersListPage from './pages/admin/UsersListPage';
 import ProtectedRoute from './components/common/ProtectedRoute';
 
 function App() {
-  const isDev = import.meta.env.VITE_DEV_MODE === 'true';
   
   return (
-    <Router>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <AuthProvider>
         <Routes>
-          {/* DEVELOPMENT: Redirect root to lessee dashboard */}
-          <Route path="/" element={<Navigate to="/lessee/dashboard" replace />} />
+          {/* Redirect root to login page */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
           
           {/* Public Routes */}
           <Route path="/landing" element={<LandingPage />} />

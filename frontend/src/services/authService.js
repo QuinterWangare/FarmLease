@@ -66,7 +66,15 @@ const authService = {
   // Logout
   logout: async () => {
     try {
-      await apiClient.post(API_ENDPOINTS.LOGOUT);
+      const refreshToken = localStorage.getItem('refreshToken');
+      if (refreshToken) {
+        await apiClient.post(API_ENDPOINTS.LOGOUT, {
+          refresh: refreshToken,
+        });
+      }
+    } catch (error) {
+      // If logout fails, still clear local storage
+      console.error('Logout request failed:', error);
     } finally {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');

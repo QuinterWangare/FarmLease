@@ -20,14 +20,14 @@ const LoginPage = () => {
     if (!user) return;
 
     const dashboardRoutes = {
-      OWNER: '/owner/dashboard',
-      LESSEE: '/lessee/dashboard',
-      DEALER: '/dealer/dashboard',
-      ADMIN: '/admin/dashboard',
+      landowner: '/owner/dashboard',
+      farmer: '/lessee/dashboard',
+      dealer: '/dealer/dashboard',
+      admin: '/admin/dashboard',
     };
 
     navigate(dashboardRoutes[user.role] || '/', { replace: true });
-  }, [navigate, user]);
+  }, [user?.id, navigate]); // Only re-run when user ID changes, not the whole user object
 
   const validateForm = () => {
     const newErrors = {};

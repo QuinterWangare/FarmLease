@@ -18,7 +18,7 @@ import AgreementsPage from './pages/Farm-Owner/AgreementsPage';
 
 // Lessee Pages
 import LesseeDashboard from './pages/Lessee/LesseeDashboard';
-import BrowseLandsPage from './pages/Lessee/BrowseLandsPage';
+import FindLandPage from './pages/Lessee/FindLandPage';
 import LandDetailPage from './pages/Lessee/LandDetailPage';
 import CropRecommendationPage from './pages/Lessee/CropRecommendationPage';
 
@@ -42,8 +42,11 @@ function App() {
     <Router>
       <AuthProvider>
         <Routes>
+          {/* DEVELOPMENT: Redirect root to lessee dashboard */}
+          <Route path="/" element={<Navigate to="/lessee/dashboard" replace />} />
+          
           {/* Public Routes */}
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/landing" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
@@ -134,7 +137,7 @@ function App() {
             path="/lessee/browse"
             element={
               <ProtectedRoute allowedRoles={['farmer']}>
-                <BrowseLandsPage />
+                <FindLandPage />
               </ProtectedRoute>
             }
           />
@@ -154,6 +157,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
 
           {/* Agro-Dealer Routes */}
           <Route

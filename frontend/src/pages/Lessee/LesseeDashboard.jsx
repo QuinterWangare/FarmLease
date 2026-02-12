@@ -26,6 +26,8 @@ import {
 const LesseeDashboard = () => {
   const { user, logout } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const displayName = user?.name || user?.username || 'User';
+  const displayRole = user?.role || 'lessee';
 
   return (
     <div className="bg-background-light min-h-screen flex relative">
@@ -97,13 +99,13 @@ const LesseeDashboard = () => {
         <div className="mt-auto space-y-4">
           <div className="bg-black/20 rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:bg-black/30 transition-colors">
             <img 
-              src="https://ui-avatars.com/api/?name=David+M&background=13ec80&color=0f392b&bold=true" 
+              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=13ec80&color=0f392b&bold=true`} 
               alt="User profile" 
               className="w-10 h-10 rounded-full object-cover border-2 border-primary/20"
             />
             <div className="overflow-hidden">
-              <p className="text-sm font-semibold text-white">David M.</p>
-              <p className="text-[10px] text-gray-400 truncate uppercase tracking-wider">Premium Lessee</p>
+              <p className="text-sm font-semibold text-white">{displayName}</p>
+              <p className="text-[10px] text-gray-400 truncate uppercase tracking-wider">{displayRole}</p>
             </div>
           </div>
           <div className="h-px bg-white/10 w-full"></div>

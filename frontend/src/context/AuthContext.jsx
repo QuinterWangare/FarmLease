@@ -3,6 +3,8 @@ import authService from '../services/authService';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
+const DEVELOPMENT_MODE = import.meta.env.DEV;
+
 const AuthContext = createContext(null);
 
 export const useAuth = () => {
@@ -18,26 +20,103 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Check if user is logged in on mount
+  // Check if token is expired
+  const isTokenExpired = (token) => {
+    if (!token) return true;
+    
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const expiry = payload.exp * 1000; // Convert to milliseconds
+      return Date.now() >= expiry;
+    } catch (error) {
+      return true;
+    }
+  };
+
+  // Validate and restore user session
+  const validateSession = async () => {
     const currentUser = authService.getCurrentUser();
-    if (currentUser) {
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+
+    if (!currentUser || !accessToken) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+
+    // Check if access token is expired
+    if (isTokenExpired(accessToken)) {
+      // Try to refresh with refresh token
+      if (refreshToken && !isTokenExpired(refreshToken)) {
+        try {
+          await authService.refreshToken();
+          setUser(currentUser);
+        } catch (error) {
+          // Refresh failed, clear session
+          authService.clearSession();
+          setUser(null);
+        }
+      } else {
+        // Both tokens expired, clear session
+        authService.clearSession();
+        setUser(null);
+      }
+    } else {
       setUser(currentUser);
     }
+
     setLoading(false);
+  };
+
+  useEffect(() => {
+    if (DEVELOPMENT_MODE) {
+      setLoading(false);
+      return;
+    }
+
+    validateSession();
   }, []);
 
-  const login = useCallback(async (email, password) => {
+  useEffect(() => {
+    // Listen for storage changes (cross-tab logout)
+    const handleStorageChange = (e) => {
+      if (e.key === 'accessToken' && !e.newValue) {
+        // Token was removed in another tab, logout here too
+        setUser(null);
+        navigate('/login');
+      }
+    };
+
+    // Listen for custom logout event
+    const handleLogoutEvent = () => {
+      setUser(null);
+      if (window.location.pathname !== '/login') {
+        navigate('/login');
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('auth-logout', handleLogoutEvent);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('auth-logout', handleLogoutEvent);
+    };
+  }, [navigate]);
+
+  const login = useCallback(async (email, password, rememberMe = false) => {
     try {
-      const data = await authService.login(email, password);
+      setLoading(true);
+      const data = await authService.login(email, password, rememberMe);
       const currentUser = authService.getCurrentUser();
       setUser(currentUser);
       
       // Redirect based on role and is_staff
-      if (currentUser.is_staff) {
+      if (currentUser?.is_staff) {
         navigate('/admin/dashboard');
       } else {
-        const role = currentUser.role;
+        const role = currentUser?.role;
         switch (role) {
           case 'landowner':
             navigate('/owner/dashboard');
@@ -56,14 +135,17 @@ export const AuthProvider = ({ children }) => {
       toast.success('Login successful!');
       return data;
     } catch (error) {
-      const message = error.response?.data?.message || 'Login failed';
+      const message = error.response?.data?.message || error.response?.data?.detail || 'Login failed. Please check your credentials.';
       toast.error(message);
       throw error;
+    } finally {
+      setLoading(false);
     }
   }, [navigate]);
 
   const register = useCallback(async (userData) => {
     try {
+      setLoading(true);
       const data = await authService.register(userData);
       toast.success('Registration successful! Please login.');
       navigate('/login');
@@ -95,17 +177,26 @@ export const AuthProvider = ({ children }) => {
       
       toast.error(message);
       throw error;
+    } finally {
+      setLoading(false);
     }
   }, [navigate]);
 
   const logout = useCallback(async () => {
     try {
+      setLoading(true);
       await authService.logout();
       setUser(null);
       navigate('/login');
       toast.info('Logged out successfully');
     } catch (error) {
       console.error('Logout error:', error);
+      // Even if API call fails, clear local state
+      authService.clearSession();
+      setUser(null);
+      navigate('/login');
+    } finally {
+      setLoading(false);
     }
   }, [navigate]);
 

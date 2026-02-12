@@ -58,7 +58,7 @@ function App() {
           <Route
             path="/owner/dashboard"
             element={
-              <ProtectedRoute allowedRoles={['OWNER']}>
+              <ProtectedRoute allowedRoles={['landowner']}>
                 <OwnerDashboard />
               </ProtectedRoute>
             }
@@ -66,7 +66,7 @@ function App() {
           <Route
             path="/owner/lands"
             element={
-              <ProtectedRoute allowedRoles={['OWNER']}>
+              <ProtectedRoute allowedRoles={['landowner']}>
                 <MyLandsPage />
               </ProtectedRoute>
             }
@@ -74,7 +74,7 @@ function App() {
           <Route
             path="/owner/lands/add"
             element={
-              <ProtectedRoute allowedRoles={['OWNER']}>
+              <ProtectedRoute allowedRoles={['landowner']}>
                 <AddLandPage />
               </ProtectedRoute>
             }
@@ -82,7 +82,7 @@ function App() {
           <Route
             path="/owner/lease-requests"
             element={
-              <ProtectedRoute allowedRoles={['OWNER']}>
+              <ProtectedRoute allowedRoles={['landowner']}>
                 <LeaseRequestsPage />
               </ProtectedRoute>
             }
@@ -90,7 +90,7 @@ function App() {
           <Route
             path="/owner/financials"
             element={
-              <ProtectedRoute allowedRoles={['OWNER']}>
+              <ProtectedRoute allowedRoles={['landowner']}>
                 <FinancialsPage />
               </ProtectedRoute>
             }
@@ -98,7 +98,7 @@ function App() {
           <Route
             path="/owner/escrow"
             element={
-              <ProtectedRoute allowedRoles={['OWNER']}>
+              <ProtectedRoute allowedRoles={['landowner']}>
                 <EscrowStatusPage />
               </ProtectedRoute>
             }
@@ -106,7 +106,7 @@ function App() {
           <Route
             path="/owner/agreements"
             element={
-              <ProtectedRoute allowedRoles={['OWNER']}>
+              <ProtectedRoute allowedRoles={['landowner']}>
                 <AgreementsPage />
               </ProtectedRoute>
             }
@@ -114,7 +114,7 @@ function App() {
           <Route
             path="/owner/profile"
             element={
-              <ProtectedRoute allowedRoles={['OWNER']}>
+              <ProtectedRoute allowedRoles={['landowner']}>
                 <ProfileSettingsPage />
               </ProtectedRoute>
             }

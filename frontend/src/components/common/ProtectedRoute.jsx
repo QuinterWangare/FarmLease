@@ -30,10 +30,10 @@ const ProtectedRoute = ({ children, allowedRoles = [], requireAdmin = false }) =
   if (requireAdmin && !user.is_staff) {
     // Redirect to appropriate dashboard based on user role
     const dashboardRoutes = {
-      OWNER: '/owner/dashboard',
-      LESSEE: '/lessee/dashboard',
-      DEALER: '/dealer/dashboard',
-      ADMIN: '/admin/dashboard',
+      landowner: '/owner/dashboard',
+      farmer: '/lessee/dashboard',
+      dealer: '/dealer/dashboard',
+      admin: '/admin/dashboard',
     };
     return <Navigate to={dashboardRoutes[user.role] || '/'} replace />;
   }
@@ -42,10 +42,10 @@ const ProtectedRoute = ({ children, allowedRoles = [], requireAdmin = false }) =
   if (allowedRoles.length > 0 && !allowedRoles.includes(user.role) && !user.is_staff) {
     // Redirect to appropriate dashboard based on user role
     const dashboardRoutes = {
-      OWNER: '/owner/dashboard',
-      LESSEE: '/lessee/dashboard',
-      DEALER: '/dealer/dashboard',
-      ADMIN: '/admin/dashboard',
+      landowner: '/owner/dashboard',
+      farmer: '/lessee/dashboard',
+      dealer: '/dealer/dashboard',
+      admin: '/admin/dashboard',
     };
     return <Navigate to={dashboardRoutes[user.role] || '/'} replace />;
   }

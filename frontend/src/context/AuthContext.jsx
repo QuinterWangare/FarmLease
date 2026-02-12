@@ -14,7 +14,18 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  // DEVELOPMENT MODE: Set mock user to bypass authentication
+  const DEVELOPMENT_MODE = true; // Set to false when backend is ready
+  
+  const mockUser = {
+    id: 1,
+    name: 'David M.',
+    email: 'david@farmlease.com',
+    role: 'LESSEE',
+    phone_number: '+254712345678',
+  };
+
+  const [user, setUser] = useState(DEVELOPMENT_MODE ? mockUser : null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -68,8 +79,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    validateSession();
+    if (DEVELOPMENT_MODE) {
+      setLoading(false);
+      return;
+    }
 
+    validateSession();
+  }, []);
+
+  useEffect(() => {
     // Listen for storage changes (cross-tab logout)
     const handleStorageChange = (e) => {
       if (e.key === 'accessToken' && !e.newValue) {
@@ -99,26 +117,28 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password, rememberMe = false) => {
     try {
       setLoading(true);
-      const data = await authService.login(email, password, rememberMe);
-      setUser(data.user);
+    const data = await authService.login(email, password, rememberMe);
+    const currentUser = authService.getCurrentUser();
+    setUser(currentUser);
       
-      // Redirect based on role
-      const role = data.user.role;
-      switch (role) {
-        case 'OWNER':
-          navigate('/owner/dashboard');
-          break;
-        case 'LESSEE':
-          navigate('/lessee/dashboard');
-          break;
-        case 'DEALER':
-          navigate('/dealer/dashboard');
-          break;
-        case 'ADMIN':
-          navigate('/admin/dashboard');
-          break;
-        default:
-          navigate('/');
+      // Redirect based on role and is_staff
+    if (currentUser?.is_staff) {
+        navigate('/admin/dashboard');
+      } else {
+      const role = currentUser?.role;
+        switch (role) {
+          case 'landowner':
+            navigate('/owner/dashboard');
+            break;
+          case 'farmer':
+            navigate('/lessee/dashboard');
+            break;
+          case 'dealer':
+            navigate('/dealer/dashboard');
+            break;
+          default:
+            navigate('/');
+        }
       }
       
       toast.success('Login successful!');
@@ -140,22 +160,31 @@ export const AuthProvider = ({ children }) => {
       navigate('/login');
       return data;
     } catch (error) {
-      const message = error.response?.data?.message || error.response?.data?.detail || 'Registration failed';
+      console.error('Registration error details:', error.response?.data);
+      // Handle validation errors from backend
+      const errorData = error.response?.data;
+      let message = 'Registration failed';
       
-      // Handle field-specific errors
-      if (error.response?.data) {
-        const errors = error.response.data;
-        if (errors.email) {
-          toast.error(`Email: ${errors.email[0]}`);
-        } else if (errors.password) {
-          toast.error(`Password: ${errors.password[0]}`);
+      if (errorData) {
+        if (typeof errorData === 'string') {
+          message = errorData;
+        } else if (errorData.message) {
+          message = errorData.message;
         } else {
-          toast.error(message);
+          // Handle field-specific errors
+          const errors = [];
+          for (const [field, msgs] of Object.entries(errorData)) {
+            if (Array.isArray(msgs)) {
+              errors.push(`${field}: ${msgs.join(', ')}`);
+            } else {
+              errors.push(`${field}: ${msgs}`);
+            }
+          }
+          message = errors.length > 0 ? errors.join('\n') : 'Registration failed';
         }
-      } else {
-        toast.error(message);
       }
       
+      toast.error(message);
       throw error;
     } finally {
       setLoading(false);
@@ -188,6 +217,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     isAuthenticated: !!user,
     userRole: user?.role || null,
+    isStaff: user?.is_staff || false,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

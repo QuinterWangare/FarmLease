@@ -1,30 +1,64 @@
 import apiClient from './apiClient';
 import { API_ENDPOINTS } from '../constants';
+import { jwtDecode } from 'jwt-decode';
 
 const authService = {
+  // Decode JWT and extract user info
+  decodeToken: (token) => {
+    try {
+      return jwtDecode(token);
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      return null;
+    }
+  },
+
   // Login
   login: async (email, password, rememberMe = false) => {
     const response = await apiClient.post(API_ENDPOINTS.LOGIN, {
       email,
       password,
     });
-    
+
     if (response.data.access) {
       localStorage.setItem('accessToken', response.data.access);
       localStorage.setItem('refreshToken', response.data.refresh);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      
+
+      const decodedToken = authService.decodeToken(response.data.access);
+      const user = response.data.user || (decodedToken
+        ? {
+            id: decodedToken.user_id,
+            email: decodedToken.email,
+            role: decodedToken.role,
+            is_staff: decodedToken.is_staff,
+            username: decodedToken.username,
+          }
+        : null);
+
+      if (user) {
+        localStorage.setItem('user', JSON.stringify(user));
+      }
+
       if (rememberMe) {
         localStorage.setItem('rememberMe', 'true');
       }
     }
-    
+
     return response.data;
   },
 
   // Register
   register: async (userData) => {
-    const response = await apiClient.post(API_ENDPOINTS.REGISTER, userData);
+    // Map frontend field names to backend field names
+    const backendData = {
+      username: userData.name,
+      email: userData.email,
+      password: userData.password,
+      phone_number: userData.phone,
+      role: userData.role // Already mapped to backend values in constants
+    };
+    console.log('Sending registration data:', backendData);
+    const response = await apiClient.post(API_ENDPOINTS.REGISTER, backendData);
     return response.data;
   },
 
@@ -55,6 +89,19 @@ const authService = {
 
     if (response.data.access) {
       localStorage.setItem('accessToken', response.data.access);
+      const decodedToken = authService.decodeToken(response.data.access);
+      if (decodedToken) {
+        const user = authService.getCurrentUser() || {};
+        const mergedUser = {
+          ...user,
+          id: decodedToken.user_id,
+          email: decodedToken.email,
+          role: decodedToken.role,
+          is_staff: decodedToken.is_staff,
+          username: decodedToken.username,
+        };
+        localStorage.setItem('user', JSON.stringify(mergedUser));
+      }
       return response.data.access;
     }
 
@@ -69,10 +116,29 @@ const authService = {
     localStorage.removeItem('rememberMe');
   },
 
-  // Get current user
+  // Get current user from localStorage or decode from token
   getCurrentUser: () => {
     const userStr = localStorage.getItem('user');
-    return userStr ? JSON.parse(userStr) : null;
+    if (userStr) {
+      return JSON.parse(userStr);
+    }
+    
+    // If no user in localStorage, try to decode from token
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      const decodedToken = authService.decodeToken(token);
+      if (decodedToken) {
+        return {
+          id: decodedToken.user_id,
+          email: decodedToken.email,
+          role: decodedToken.role,
+          is_staff: decodedToken.is_staff,
+          username: decodedToken.username,
+        };
+      }
+    }
+    
+    return null;
   },
 
   // Check if user is authenticated
@@ -95,6 +161,12 @@ const authService = {
       return updatedUser;
     }
     return null;
+  },
+
+  // Check if user is staff/admin
+  isStaff: () => {
+    const user = authService.getCurrentUser();
+    return user?.is_staff || false;
   },
 };
 

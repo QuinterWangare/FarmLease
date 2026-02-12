@@ -10,10 +10,15 @@ import RegisterPage from './pages/auth/RegisterPage';
 import OwnerDashboard from './pages/Farm-Owner/FarmOwnerDashboard';
 import MyLandsPage from './pages/Farm-Owner/MyLandsPage';
 import AddLandPage from './pages/Farm-Owner/AddLandPage';
+import EscrowStatusPage from './pages/Farm-Owner/EscrowStatusPage';
+import FinancialsPage from './pages/Farm-Owner/FinancialsPage';
+import ProfileSettingsPage from './pages/Farm-Owner/ProfileSettingsPage';
+import LeaseRequestsPage from './pages/Farm-Owner/LeaseRequestsPageWeb';
+import AgreementsPage from './pages/Farm-Owner/AgreementsPage';
 
 // Lessee Pages
 import LesseeDashboard from './pages/Lessee/LesseeDashboard';
-import BrowseLandsPage from './pages/Lessee/BrowseLandsPage';
+import FindLandPage from './pages/Lessee/FindLandPage';
 import LandDetailPage from './pages/Lessee/LandDetailPage';
 import CropRecommendationPage from './pages/Lessee/CropRecommendationPage';
 
@@ -39,20 +44,29 @@ import UsersListPage from './pages/admin/UsersListPage';
 import ProtectedRoute from './components/common/ProtectedRoute';
 
 function App() {
+  const isDev = import.meta.env.VITE_DEV_MODE === 'true';
+  
   return (
     <Router>
       <AuthProvider>
         <Routes>
+          {/* DEVELOPMENT: Redirect root to lessee dashboard */}
+          <Route path="/" element={<Navigate to="/lessee/dashboard" replace />} />
+          
           {/* Public Routes */}
-          <Route path="/" element={<Navigate to="/dealer/dashboard" replace />} />
+          <Route path="/landing" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
           {/* Farm Owner Routes */}
           <Route
+            path="/owner"
+            element={<Navigate to="/owner/dashboard" replace />}
+          />
+          <Route
             path="/owner/dashboard"
             element={
-              <ProtectedRoute allowedRoles={['OWNER']}>
+              <ProtectedRoute allowedRoles={['landowner']}>
                 <OwnerDashboard />
               </ProtectedRoute>
             }
@@ -60,7 +74,7 @@ function App() {
           <Route
             path="/owner/lands"
             element={
-              <ProtectedRoute allowedRoles={['OWNER']}>
+              <ProtectedRoute allowedRoles={['landowner']}>
                 <MyLandsPage />
               </ProtectedRoute>
             }
@@ -68,17 +82,61 @@ function App() {
           <Route
             path="/owner/lands/add"
             element={
-              <ProtectedRoute allowedRoles={['OWNER']}>
+              <ProtectedRoute allowedRoles={['landowner']}>
                 <AddLandPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/owner/lease-requests"
+            element={
+              <ProtectedRoute allowedRoles={['landowner']}>
+                <LeaseRequestsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/owner/financials"
+            element={
+              <ProtectedRoute allowedRoles={['landowner']}>
+                <FinancialsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/owner/escrow"
+            element={
+              <ProtectedRoute allowedRoles={['landowner']}>
+                <EscrowStatusPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/owner/agreements"
+            element={
+              <ProtectedRoute allowedRoles={['landowner']}>
+                <AgreementsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/owner/profile"
+            element={
+              <ProtectedRoute allowedRoles={['landowner']}>
+                <ProfileSettingsPage />
               </ProtectedRoute>
             }
           />
 
           {/* Lessee Routes */}
           <Route
+            path="/lessee"
+            element={<Navigate to="/lessee/dashboard" replace />}
+          />
+          <Route
             path="/lessee/dashboard"
             element={
-              <ProtectedRoute allowedRoles={['LESSEE']}>
+              <ProtectedRoute allowedRoles={['farmer']}>
                 <LesseeDashboard />
               </ProtectedRoute>
             }
@@ -86,15 +144,15 @@ function App() {
           <Route
             path="/lessee/browse"
             element={
-              <ProtectedRoute allowedRoles={['LESSEE']}>
-                <BrowseLandsPage />
+              <ProtectedRoute allowedRoles={['farmer']}>
+                <FindLandPage />
               </ProtectedRoute>
             }
           />
           <Route
             path="/lessee/lands/:id"
             element={
-              <ProtectedRoute allowedRoles={['LESSEE']}>
+              <ProtectedRoute allowedRoles={['farmer']}>
                 <LandDetailPage />
               </ProtectedRoute>
             }
@@ -102,17 +160,22 @@ function App() {
           <Route
             path="/lessee/recommendations"
             element={
-              <ProtectedRoute allowedRoles={['LESSEE']}>
+              <ProtectedRoute allowedRoles={['farmer']}>
                 <CropRecommendationPage />
               </ProtectedRoute>
             }
           />
 
+
           {/* Agro-Dealer Routes */}
+          <Route
+            path="/dealer"
+            element={<Navigate to="/dealer/dashboard" replace />}
+          />
           <Route
             path="/dealer/dashboard"
             element={
-              <ProtectedRoute allowedRoles={['DEALER']}>
+              <ProtectedRoute allowedRoles={['dealer']}>
                 <DealerDashboard />
               </ProtectedRoute>
             }
@@ -120,7 +183,7 @@ function App() {
           <Route
             path="/dealer/products"
             element={
-              <ProtectedRoute allowedRoles={['DEALER']}>
+              <ProtectedRoute allowedRoles={['dealer']}>
                 <MyProductsPage />
               </ProtectedRoute>
             }
@@ -144,7 +207,7 @@ function App() {
           <Route
             path="/dealer/products/add"
             element={
-              <ProtectedRoute allowedRoles={['DEALER']}>
+              <ProtectedRoute allowedRoles={['dealer']}>
                 <AddProductPage />
               </ProtectedRoute>
             }
@@ -200,9 +263,13 @@ function App() {
 
           {/* Admin Routes */}
           <Route
+            path="/admin"
+            element={<Navigate to="/admin/dashboard" replace />}
+          />
+          <Route
             path="/admin/dashboard"
             element={
-              <ProtectedRoute allowedRoles={['ADMIN']}>
+              <ProtectedRoute requireAdmin={true}>
                 <AdminDashboard />
               </ProtectedRoute>
             }
@@ -210,7 +277,7 @@ function App() {
           <Route
             path="/admin/lands/pending"
             element={
-              <ProtectedRoute allowedRoles={['ADMIN']}>
+              <ProtectedRoute requireAdmin={true}>
                 <PendingLandsPage />
               </ProtectedRoute>
             }
@@ -218,7 +285,7 @@ function App() {
           <Route
             path="/admin/users"
             element={
-              <ProtectedRoute allowedRoles={['ADMIN']}>
+              <ProtectedRoute requireAdmin={true}>
                 <UsersListPage />
               </ProtectedRoute>
             }

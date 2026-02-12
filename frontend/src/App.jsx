@@ -19,6 +19,8 @@ import AgreementsPage from './pages/Farm-Owner/AgreementsPage';
 // Lessee Pages
 import LesseeDashboard from './pages/Lessee/LesseeDashboard';
 import FindLandPage from './pages/Lessee/FindLandPage';
+import LandDetailPage from './pages/Lessee/LandDetailPage';
+import CropRecommendationPage from './pages/Lessee/CropRecommendationPage';
 
 // Dealer Pages
 import DealerDashboard from './pages/Agro-Dealer/DealerDashboard';
@@ -126,7 +128,7 @@ function App() {
           <Route
             path="/lessee/dashboard"
             element={
-              <ProtectedRoute allowedRoles={['LESSEE']}>
+              <ProtectedRoute allowedRoles={['farmer']}>
                 <LesseeDashboard />
               </ProtectedRoute>
             }
@@ -134,8 +136,24 @@ function App() {
           <Route
             path="/lessee/browse"
             element={
-              <ProtectedRoute allowedRoles={['LESSEE']}>
+              <ProtectedRoute allowedRoles={['farmer']}>
                 <FindLandPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/lessee/lands/:id"
+            element={
+              <ProtectedRoute allowedRoles={['farmer']}>
+                <LandDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/lessee/recommendations"
+            element={
+              <ProtectedRoute allowedRoles={['farmer']}>
+                <CropRecommendationPage />
               </ProtectedRoute>
             }
           />
@@ -149,7 +167,7 @@ function App() {
           <Route
             path="/dealer/dashboard"
             element={
-              <ProtectedRoute allowedRoles={['DEALER']}>
+              <ProtectedRoute allowedRoles={['dealer']}>
                 <DealerDashboard />
               </ProtectedRoute>
             }
@@ -157,7 +175,7 @@ function App() {
           <Route
             path="/dealer/products"
             element={
-              <ProtectedRoute allowedRoles={['DEALER']}>
+              <ProtectedRoute allowedRoles={['dealer']}>
                 <MyProductsPage />
               </ProtectedRoute>
             }
@@ -165,7 +183,7 @@ function App() {
           <Route
             path="/dealer/products/add"
             element={
-              <ProtectedRoute allowedRoles={['DEALER']}>
+              <ProtectedRoute allowedRoles={['dealer']}>
                 <AddProductPage />
               </ProtectedRoute>
             }

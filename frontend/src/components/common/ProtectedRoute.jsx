@@ -11,9 +11,6 @@ const ProtectedRoute = ({ children, allowedRoles = [], requireAdmin = false }) =
   }
 
   const { user, loading } = useAuth();
-  
-  // DEVELOPMENT MODE: Bypass auth check
-  const DEVELOPMENT_MODE = true; // Set to false when backend is ready
 
   // Show loading spinner while checking authentication
   if (loading) {
@@ -24,12 +21,8 @@ const ProtectedRoute = ({ children, allowedRoles = [], requireAdmin = false }) =
     );
   }
 
-<<<<<<< HEAD
-  if (!user && !DEVELOPMENT_MODE) {
-=======
   // Redirect to login if not authenticated
   if (!user) {
->>>>>>> 80fa43ea4c837462eb139e3bc00a0e145116cbdb
     return <Navigate to="/login" replace />;
   }
 

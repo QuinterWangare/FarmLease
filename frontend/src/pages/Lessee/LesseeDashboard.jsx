@@ -3,13 +3,38 @@ import Sidebar from '../../components/layout/Sidebar';
 import Card from '../../components/common/Card';
 
 const LesseeDashboard = () => {
+  // menuItems now specifically expects URL links for the icon property
   const menuItems = [
-    { label: 'Dashboard', path: '/lessee/dashboard', icon: '📊' },
-    { label: 'Browse Lands', path: '/lessee/browse', icon: '🔍' },
-    { label: 'My Leases', path: '/lessee/leases', icon: '📄' },
-    { label: 'Crop Recommendations', path: '/lessee/recommendations', icon: '🌾' },
-    { label: 'Agro Products', path: '/lessee/products', icon: '🛒' },
-    { label: 'Profile', path: '/lessee/profile', icon: '👤' },
+    { 
+      label: 'Dashboard', 
+      path: '/lessee/dashboard', 
+      icon: 'https://toppng.com/uploads/preview/dashboard-svg-icon-free-dashboard-icon-11553444664o1utwdkesz.png' 
+    },
+    { 
+      label: 'Browse Lands', 
+      path: '/lessee/browse', 
+      icon: 'PASTE_SEARCH_PNG_URL_HERE' 
+    },
+    { 
+      label: 'My Leases', 
+      path: '/lessee/leases', 
+      icon: 'PASTE_LEASE_PNG_URL_HERE' 
+    },
+    { 
+      label: 'Crop Recommendations', 
+      path: '/lessee/recommendations', 
+      icon: 'PASTE_CROP_PNG_URL_HERE' 
+    },
+    { 
+      label: 'Agro Products', 
+      path: '/lessee/products', 
+      icon: 'PASTE_CART_PNG_URL_HERE' 
+    },
+    { 
+      label: 'Profile', 
+      path: '/lessee/profile', 
+      icon: 'PASTE_PROFILE_PNG_URL_HERE' 
+    },
   ];
 
   return (
@@ -49,18 +74,38 @@ const LesseeDashboard = () => {
         <Card>
           <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <button className="p-4 border-2 border-primary-600 rounded-lg hover:bg-primary-50 transition">
-              <div className="text-2xl mb-2">🔍</div>
+            
+            {/* Quick Action: Dashboard (Pulling from URL) */}
+            <button className="flex flex-col items-center p-4 border-2 border-primary-600 rounded-lg hover:bg-primary-50 transition">
+              <img 
+                src="https://toppng.com/uploads/preview/dashboard-svg-icon-free-dashboard-icon-11553444664o1utwdkesz.png" 
+                alt="Dashboard Icon" 
+                className="w-12 h-12 mb-2 object-contain"
+                onError={(e) => { e.target.src = 'https://via.placeholder.com/48?text=Icon'; }} // Fallback if link breaks
+              />
+              <div className="font-medium">Dashboard</div>
+            </button>
+
+            {/* Quick Action: Browse (Slot for URL) */}
+            <button className="flex flex-col items-center p-4 border-2 border-primary-600 rounded-lg hover:bg-primary-50 transition">
+              <img 
+                src="PASTE_SEARCH_PNG_URL_HERE" 
+                alt="Browse Icon" 
+                className="w-12 h-12 mb-2 object-contain"
+              />
               <div className="font-medium">Browse Lands</div>
             </button>
-            <button className="p-4 border-2 border-primary-600 rounded-lg hover:bg-primary-50 transition">
-              <div className="text-2xl mb-2">🌾</div>
-              <div className="font-medium">Get Crop Advice</div>
-            </button>
-            <button className="p-4 border-2 border-primary-600 rounded-lg hover:bg-primary-50 transition">
-              <div className="text-2xl mb-2">🛒</div>
+
+            {/* Quick Action: Products (Slot for URL) */}
+            <button className="flex flex-col items-center p-4 border-2 border-primary-600 rounded-lg hover:bg-primary-50 transition">
+              <img 
+                src="PASTE_CART_PNG_URL_HERE" 
+                alt="Products Icon" 
+                className="w-12 h-12 mb-2 object-contain"
+              />
               <div className="font-medium">Buy Products</div>
             </button>
+
           </div>
         </Card>
       </div>

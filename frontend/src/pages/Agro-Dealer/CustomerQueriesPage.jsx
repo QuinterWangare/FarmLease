@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
 
 const CustomerQueriesPage = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('queries');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedConversation, setSelectedConversation] = useState('grace');
   const [filterTab, setFilterTab] = useState('all');
   const [messageInput, setMessageInput] = useState('');
@@ -192,38 +190,19 @@ const CustomerQueriesPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-800 to-emerald-900 md:flex relative">
-      {/* Mobile Overlay */}
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
-          onClick={() => setIsSidebarOpen(false)}
-        ></div>
-      )}
-
+    <div className="min-h-screen bg-gradient-to-br from-emerald-800 to-emerald-900 flex">
       {/* Sidebar */}
-      <div className={`fixed md:static w-64 bg-gradient-to-b from-emerald-900 to-emerald-950 text-white p-6 flex flex-col shadow-2xl h-screen z-40 transition-transform duration-300 ease-in-out ${
-        isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      } md:translate-x-0`}>
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-emerald-100">FarmLease</h1>
-            <p className="text-emerald-300 text-sm">Agro-Dealer Hub</p>
-          </div>
-          <button
-            onClick={() => setIsSidebarOpen(false)}
-            className="md:hidden text-white hover:bg-emerald-800 p-2 rounded-lg transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
+      <div className="w-64 bg-gradient-to-b from-emerald-900 to-emerald-950 text-white p-6 flex flex-col shadow-2xl">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-emerald-100">FarmLease</h1>
+          <p className="text-emerald-300 text-sm">Agro-Dealer Hub</p>
         </div>
 
-        <nav className="flex-1 space-y-2 overflow-y-auto">
+        <nav className="flex-1 space-y-2">
           {menuItems.map((item) => (
             <Link
               key={item.id}
               to={item.path}
-              onClick={() => setIsSidebarOpen(false)}
               className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-200 ${
                 location.pathname === item.path
                   ? 'bg-emerald-700 text-white shadow-lg'
@@ -266,22 +245,14 @@ const CustomerQueriesPage = () => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col bg-gray-50 overflow-hidden">
-        {/* Mobile Menu Button */}
-        <div className="md:hidden bg-white border-b border-gray-200 p-4 sticky top-0 z-20">
-          <button
-            onClick={() => setIsSidebarOpen(true)}
-            className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 p-2 rounded-lg transition-colors"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
-        </div>
-
         {/* Header */}
-        <div className="h-auto md:h-20 border-b border-gray-100 bg-white flex flex-col md:flex-row items-start md:items-center justify-between p-4 sm:px-6 lg:px-8 shrink-0 gap-2 md:gap-0">\n          <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Customer Queries</h2>
+        <div className="h-20 border-b border-gray-100 bg-white flex items-center justify-between px-8 shrink-0">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800">Customer Queries</h2>
             <p className="text-gray-500 text-xs">Manage farmer inquiries and product questions.</p>
           </div>
-          <div className="flex items-center gap-4 w-full md:w-auto">\n            <div className="relative flex-1 md:flex-none">
+          <div className="flex items-center gap-4">
+            <div className="relative hidden md:block">
               <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                 🔍
               </span>

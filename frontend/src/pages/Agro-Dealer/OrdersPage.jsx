@@ -3,48 +3,25 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Badge from '../../components/common/Badge';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
-import {
-  LayoutDashboard,
-  Package,
-  ShoppingCart,
-  ClipboardList,
-  PlusCircle,
-  MessageSquare,
-  CreditCard,
-  TrendingUp,
-  TrendingDown,
-  Bell,
-  Search,
-  Settings,
-  Download,
-  Truck,
-  Store,
-  LogOut,
-  Menu,
-  X,
-  MapPin,
-  Phone
-} from 'lucide-react';
 
 const OrdersPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('orders');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [orderFilter, setOrderFilter] = useState('all');
   const [selectedOrder, setSelectedOrder] = useState(null);
 
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dealer/dashboard' },
-    { id: 'inventory', label: 'Inventory', icon: Package, path: '/dealer/inventory' },
-    { id: 'orders', label: 'Orders', icon: ShoppingCart, badge: 5, path: '/dealer/orders' },
-    { id: 'products', label: 'My Products', icon: ClipboardList, path: '/dealer/products' },
-    { id: 'add-product', label: 'Add New Products', icon: PlusCircle, path: '/dealer/products/add' },
-    { id: 'queries', label: 'Customer Queries', icon: MessageSquare, path: '/dealer/queries' },
-    { id: 'transactions', label: 'Transactions', icon: CreditCard, path: '/dealer/transactions' },
-    { id: 'analytics', label: 'Sales Analytics', icon: TrendingUp, path: '/dealer/analytics' },
-    { id: 'trends', label: 'Market Trends', icon: TrendingDown, path: '/dealer/trends' },
-    { id: 'notifications', label: 'Notifications', icon: Bell, path: '/dealer/notifications' },
+    { id: 'dashboard', label: 'Dashboard', icon: '📊', path: '/dealer/dashboard' },
+    { id: 'inventory', label: 'Inventory', icon: '📦', path: '/dealer/inventory' },
+    { id: 'orders', label: 'Orders', icon: '🛒', badge: 5, path: '/dealer/orders' },
+    { id: 'products', label: 'My Products', icon: '📋', path: '/dealer/products' },
+    { id: 'add-product', label: 'Add New Products', icon: '➕', path: '/dealer/products/add' },
+    { id: 'queries', label: 'Customer Queries', icon: '💬', path: '/dealer/queries' },
+    { id: 'transactions', label: 'Transactions', icon: '💳', path: '/dealer/transactions' },
+    { id: 'analytics', label: 'Sales Analytics', icon: '📈', path: '/dealer/analytics' },
+    { id: 'trends', label: 'Market Trends', icon: '📉', path: '/dealer/trends' },
+    { id: 'notifications', label: 'Notifications', icon: '🔔', path: '/dealer/notifications' },
   ];
 
   const orders = [
@@ -60,7 +37,7 @@ const OrdersPage = () => {
       address: 'Green Valley Farm, Plot 45B, Nakuru County',
       items: [
         { name: 'DAP Fertilizer - 50kg', qty: 20, price: 3500, total: 70000, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCBP-azLMzvokNkzokvWwtDAMPaAzyqBM1e4HpllgEiLWPsF9SPXz4jh_U35KfhmqaGC8c3RElRiVy4ruiAFJRb3kn0Q0YwmY9Oc8VS7dR-6ciuLVHdCYBzxFZlCAsxDTJmg9mAME5jUZLwj6cfCIhhejjUsyY7Ik76-uKbtoTG7eqLmi_Khdr7lOo2kAi7i7AmsyEdM8GQR-xhG1ZYsDnXcL3vE2JMgBk8oxw9QpcMiCDeKPGmXtb4pm9CJJAfEQ1Wf1VfDu_hI-tt' },
-        { name: 'Delivery Fee', qty: 1, price: 2500, total: 2500, icon: <Truck className="w-4 h-4" /> }
+        { name: 'Delivery Fee', qty: 1, price: 2500, total: 2500, icon: '🚚' }
       ]
     },
     {
@@ -89,7 +66,7 @@ const OrdersPage = () => {
       address: 'Industrial Area, Nairobi',
       items: [
         { name: 'NPK 17-17-17 Fertilizer 50kg', qty: 50, price: 2850, total: 142500 },
-        { name: 'Delivery Fee', qty: 1, price: 2700, total: 2700, icon: <Truck className="w-4 h-4" /> }
+        { name: 'Delivery Fee', qty: 1, price: 2700, total: 2700, icon: '🚚' }
       ]
     },
     {
@@ -118,7 +95,7 @@ const OrdersPage = () => {
       address: 'Kiambu Road, Plot 89A',
       items: [
         { name: 'Drip Irrigation Kit - 1 Acre', qty: 3, price: 12500, total: 37500 },
-        { name: 'Delivery Fee', qty: 1, price: 8100, total: 8100, icon: <Truck className="w-4 h-4" /> }
+        { name: 'Delivery Fee', qty: 1, price: 8100, total: 8100, icon: '🚚' }
       ]
     },
   ];
@@ -162,34 +139,12 @@ const OrdersPage = () => {
   };
 
   return (
-    <div className="min-h-screen md:flex relative bg-gradient-to-br from-emerald-800 to-emerald-900">
-      {/* Mobile Overlay */}
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
-          onClick={() => setIsSidebarOpen(false)}
-        ></div>
-      )}
-
+    <div className="min-h-screen bg-gradient-to-br from-emerald-800 to-emerald-900 flex">
       {/* Sidebar */}
-      <div
-        className={
-          `fixed md:static w-64 bg-gradient-to-b from-emerald-900 to-emerald-950 text-white p-6 flex flex-col shadow-2xl h-screen z-40 transition-transform duration-300 ease-in-out ${
-            isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          } md:translate-x-0`
-        }
-      >
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-emerald-100">FarmLease</h1>
-            <p className="text-emerald-300 text-sm">Agro-Dealer Hub</p>
-          </div>
-          <button
-            onClick={() => setIsSidebarOpen(false)}
-            className="md:hidden text-white hover:bg-emerald-800 p-2 rounded-lg transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
+      <div className="w-64 bg-gradient-to-b from-emerald-900 to-emerald-950 text-white p-6 flex flex-col shadow-2xl">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-emerald-100">FarmLease</h1>
+          <p className="text-emerald-300 text-sm">Agro-Dealer Hub</p>
         </div>
 
         <nav className="flex-1 space-y-2">
@@ -197,7 +152,6 @@ const OrdersPage = () => {
             <Link
               key={item.id}
               to={item.path}
-              onClick={() => setIsSidebarOpen(false)}
               className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-200 ${
                 location.pathname === item.path
                   ? 'bg-emerald-700 text-white shadow-lg'
@@ -205,7 +159,7 @@ const OrdersPage = () => {
               }`}
             >
               <div className="flex items-center gap-3">
-                <item.icon className="w-5 h-5" />
+                <span className="text-xl">{item.icon}</span>
                 <span className="font-medium text-sm">{item.label}</span>
               </div>
               {item.badge && (
@@ -232,9 +186,8 @@ const OrdersPage = () => {
               <p className="text-xs text-emerald-300">Store Manager</p>
             </div>
           </Link>
-          <button className="mt-3 w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2">
-            <LogOut className="w-4 h-4" />
-            <span>Logout</span>
+          <button className="mt-3 w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors">
+            Logout
           </button>
         </div>
       </div>
@@ -242,44 +195,35 @@ const OrdersPage = () => {
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden bg-gray-50">
         {/* Orders List */}
-        <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
-          <div className="max-w-7xl mx-auto space-y-6">
+        <div className="flex-1 p-8 overflow-y-auto">
+          <div className="space-y-6">
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <div className="flex items-center gap-4 flex-1">
-                <button
-                  onClick={() => setIsSidebarOpen(true)}
-                  className="md:hidden text-gray-700 hover:text-gray-900 hover:bg-gray-200 p-2 rounded-lg transition-colors"
-                >
-                  <Menu className="w-6 h-6" />
-                </button>
-                <div>
-                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1">Incoming Orders</h2>
-                  <p className="text-gray-600 text-sm">Manage fulfillment and track order status.</p>
-                </div>
+              <div>
+                <h2 className="text-3xl font-bold text-gray-800 mb-1">Incoming Orders</h2>
+                <p className="text-gray-600 text-sm">Manage fulfillment and track order status.</p>
               </div>
-              <div className="flex items-center gap-3 flex-wrap">
+              <div className="flex items-center gap-3">
                 <div className="relative">
-                  <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+                  <span className="absolute left-3 top-2.5 text-gray-400">🔍</span>
                   <input
                     type="text"
                     placeholder="Search orders..."
-                    className="pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none w-full sm:w-64"
+                    className="pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none w-64"
                   />
                 </div>
                 <button className="p-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition">
-                  <Settings className="w-5 h-5 text-gray-600" />
+                  <span className="text-lg">⚙️</span>
                 </button>
                 <Button className="flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2">
-                  <Download className="w-4 h-4" />
+                  <span>📥</span>
                   <span className="text-sm font-medium">Export</span>
                 </Button>
               </div>
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-2 border-b border-gray-200 pb-1 overflow-x-auto">
-              <div className="flex gap-2 min-w-max">
+            <div className="flex gap-2 border-b border-gray-200 pb-1">
               <button 
                 onClick={() => setOrderFilter('all')}
                 className={`px-4 py-2 text-sm font-medium ${orderFilter === 'all' ? 'text-emerald-700 border-b-2 border-emerald-700' : 'text-gray-500 hover:text-gray-700'}`}
@@ -325,12 +269,11 @@ const OrdersPage = () => {
                   {filterCounts.completed}
                 </span>
               </button>
-              </div>
             </div>
 
             {/* Orders Table */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[800px]">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+              <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-100 text-xs uppercase tracking-wider text-gray-500">
                     <th className="px-6 py-4 font-semibold">Order ID</th>

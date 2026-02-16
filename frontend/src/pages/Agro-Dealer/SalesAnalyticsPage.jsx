@@ -1,28 +1,276 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { 
-  LayoutDashboard, Package, ShoppingCart, ClipboardList, PlusCircle, 
-  MessageSquare, CreditCard, TrendingUp, TrendingDown, Bell,
-  DollarSign, BarChart3, RefreshCw, Calendar, Download, LogOut, Menu, X
-} from 'lucide-react';
 
 const SalesAnalyticsPage = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('analytics');
+  const [contentTab, setContentTab] = useState('overview');
   const [periodFilter, setPeriodFilter] = useState('month');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const exportToCSV = () => {
+    const date = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    const receiptNumber = `ANL-${Date.now().toString().slice(-8)}`;
+    const tabName = contentTab.charAt(0).toUpperCase() + contentTab.slice(1);
+    
+    let contentHTML = '';
+    
+    if (contentTab === 'overview') {
+      contentHTML = `
+        <div class="summary">
+          <div class="summary-card">
+            <h3>Total Revenue</h3>
+            <p>Ksh 2.4M</p>
+            <span class="trend-up">+12.5% vs last month</span>
+          </div>
+          <div class="summary-card">
+            <h3>Total Orders</h3>
+            <p>856</p>
+            <span class="trend-up">+5.2% vs last month</span>
+          </div>
+          <div class="summary-card">
+            <h3>Avg. Order Value</h3>
+            <p>Ksh 2,800</p>
+            <span class="trend-down">-2.1% vs last month</span>
+          </div>
+          <div class="summary-card">
+            <h3>Customer Retention</h3>
+            <p>68%</p>
+            <span class="trend-up">+8% vs last month</span>
+          </div>
+        </div>
+        
+        <h2 style="margin: 30px 0 15px; font-size: 18px; color: #1f2937;">Top Performing Categories</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Revenue</th>
+              <th>Percentage of Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${topCategories.map(cat => `
+              <tr>
+                <td><strong>${cat.name}</strong></td>
+                <td>Ksh ${cat.revenue.toLocaleString()}</td>
+                <td><div class="bar-container"><div class="bar" style="width: ${cat.percentage}%;"></div><span>${cat.percentage}%</span></div></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    } else if (contentTab === 'products') {
+      contentHTML = `
+        <h2 style="margin: 20px 0 15px; font-size: 18px; color: #1f2937;">Product Performance by Category</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Revenue</th>
+              <th>Performance</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${topCategories.map(cat => `
+              <tr>
+                <td><strong>${cat.name}</strong></td>
+                <td>Ksh ${cat.revenue.toLocaleString()}</td>
+                <td><div class="bar-container"><div class="bar" style="width: ${cat.percentage}%;"></div><span>${cat.percentage}%</span></div></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px;">
+          <div>
+            <h2 style="margin-bottom: 15px; font-size: 18px; color: #1f2937;">Best Sellers</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Units Sold</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Hybrid Maize Seeds</td>
+                  <td><span class="highlight-success">145 units</span></td>
+                </tr>
+                <tr>
+                  <td>NPK Fertilizer</td>
+                  <td><span class="highlight-success">132 units</span></td>
+                </tr>
+                <tr>
+                  <td>Insecticide</td>
+                  <td><span class="highlight-success">98 units</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div>
+            <h2 style="margin-bottom: 15px; font-size: 18px; color: #1f2937;">Low Performers</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Units Sold</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Irrigation Pipes</td>
+                  <td><span class="highlight-warning">12 units</span></td>
+                </tr>
+                <tr>
+                  <td>Garden Tools</td>
+                  <td><span class="highlight-warning">18 units</span></td>
+                </tr>
+                <tr>
+                  <td>Organic Manure</td>
+                  <td><span class="highlight-warning">25 units</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    } else {
+      contentHTML = `
+        <div class="summary">
+          <div class="summary-card">
+            <h3>Conversion Rate</h3>
+            <p>12.5%</p>
+            <span class="trend-up">+2.4% improvement</span>
+          </div>
+          <div class="summary-card">
+            <h3>Response Time</h3>
+            <p>2.3 hrs</p>
+            <span style="font-size: 11px; color: #666;">Average response time</span>
+          </div>
+          <div class="summary-card">
+            <h3>Fulfillment Rate</h3>
+            <p>98%</p>
+            <span style="font-size: 11px; color: #666;">Order completion rate</span>
+          </div>
+        </div>
+        
+        <h2 style="margin: 30px 0 15px; font-size: 18px; color: #1f2937;">Fulfillment Breakdown</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Fulfillment Type</th>
+              <th>Percentage</th>
+              <th>Distribution</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Home Delivery</strong></td>
+              <td>65%</td>
+              <td><div class="bar-container"><div class="bar" style="width: 65%;"></div></div></td>
+            </tr>
+            <tr>
+              <td><strong>Store Pick-up</strong></td>
+              <td>35%</td>
+              <td><div class="bar-container"><div class="bar" style="width: 35%; background: #b45309;"></div></div></td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+    }
+    
+    const receiptHTML = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Sales Analytics Report - ${receiptNumber}</title>
+        <style>
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { font-family: 'Segoe UI', Arial, sans-serif; padding: 40px; background: #fff; }
+          .receipt { max-width: 900px; margin: 0 auto; }
+          .header { text-align: center; border-bottom: 3px solid #047857; padding-bottom: 20px; margin-bottom: 30px; }
+          .header h1 { color: #047857; font-size: 32px; margin-bottom: 5px; }
+          .header p { color: #666; font-size: 14px; }
+          .receipt-info { display: flex; justify-content: space-between; margin-bottom: 30px; padding: 15px; background: #f9fafb; border-radius: 8px; }
+          .receipt-info div { font-size: 13px; }
+          .receipt-info strong { color: #047857; display: block; margin-bottom: 5px; }
+          table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+          th { background: #047857; color: white; padding: 12px 8px; text-align: left; font-size: 12px; font-weight: 600; }
+          td { padding: 10px 8px; border-bottom: 1px solid #e5e7eb; font-size: 12px; }
+          tr:hover { background: #f9fafb; }
+          .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+          .summary-card { background: #f9fafb; padding: 15px; border-radius: 8px; border-left: 4px solid #047857; }
+          .summary-card h3 { font-size: 11px; color: #666; text-transform: uppercase; margin-bottom: 8px; }
+          .summary-card p { font-size: 24px; font-weight: bold; color: #1f2937; }
+          .trend-up { font-size: 11px; color: #047857; font-weight: 600; }
+          .trend-down { font-size: 11px; color: #b45309; font-weight: 600; }
+          .bar-container { display: flex; align-items: center; gap: 10px; }
+          .bar { height: 20px; background: #047857; border-radius: 4px; transition: width 0.3s; }
+          .bar-container span { font-weight: 600; color: #1f2937; min-width: 40px; }
+          .highlight-success { color: #047857; font-weight: 600; }
+          .highlight-warning { color: #b45309; font-weight: 600; }
+          .footer { text-align: center; padding-top: 20px; border-top: 2px solid #e5e7eb; color: #666; font-size: 12px; margin-top: 30px; }
+          @media print {
+            body { padding: 20px; }
+            button { display: none; }
+          }
+          .print-btn { background: #047857; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; margin-bottom: 20px; }
+          .print-btn:hover { background: #065f46; }
+        </style>
+      </head>
+      <body>
+        <div class="receipt">
+          <button class="print-btn" onclick="window.print()">🖨️ Print Receipt</button>
+          
+          <div class="header">
+            <h1>FarmLease Agro-Dealer</h1>
+            <p>Sales Analytics Report - ${tabName}</p>
+          </div>
+          
+          <div class="receipt-info">
+            <div>
+              <strong>Receipt No:</strong>
+              ${receiptNumber}
+            </div>
+            <div>
+              <strong>Date:</strong>
+              ${date} at ${time}
+            </div>
+            <div>
+              <strong>Report Type:</strong>
+              ${tabName} Analysis
+            </div>
+          </div>
+          
+          ${contentHTML}
+          
+          <div class="footer">
+            <p><strong>FarmLease Platform</strong> | Agro-Dealer Sales Analytics</p>
+            <p>This is a computer-generated report and does not require a signature.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+    
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(receiptHTML);
+    printWindow.document.close();
+  };
 
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dealer/dashboard' },
-    { id: 'inventory', label: 'Inventory', icon: Package, path: '/dealer/inventory' },
-    { id: 'orders', label: 'Orders', icon: ShoppingCart, badge: 5, path: '/dealer/orders' },
-    { id: 'products', label: 'My Products', icon: ClipboardList, path: '/dealer/products' },
-    { id: 'add-product', label: 'Add New Products', icon: PlusCircle, path: '/dealer/products/add' },
-    { id: 'queries', label: 'Customer Queries', icon: MessageSquare, path: '/dealer/queries' },
-    { id: 'transactions', label: 'Transactions', icon: CreditCard, path: '/dealer/transactions' },
-    { id: 'analytics', label: 'Sales Analytics', icon: TrendingUp, path: '/dealer/analytics' },
-    { id: 'trends', label: 'Market Trends', icon: TrendingDown, path: '/dealer/trends' },
-    { id: 'notifications', label: 'Notifications', icon: Bell, badge: 2, path: '/dealer/notifications' },
+    { id: 'dashboard', label: 'Dashboard', icon: '📊', path: '/dealer/dashboard' },
+    { id: 'inventory', label: 'Inventory', icon: '📦', path: '/dealer/inventory' },
+    { id: 'orders', label: 'Orders', icon: '🛒', badge: 5, path: '/dealer/orders' },
+    { id: 'products', label: 'My Products', icon: '📋', path: '/dealer/products' },
+    { id: 'add-product', label: 'Add New Products', icon: '➕', path: '/dealer/products/add' },
+    { id: 'queries', label: 'Customer Queries', icon: '💬', path: '/dealer/queries' },
+    { id: 'transactions', label: 'Transactions', icon: '💳', path: '/dealer/transactions' },
+    { id: 'analytics', label: 'Sales Analytics', icon: '📈', path: '/dealer/analytics' },
+    { id: 'trends', label: 'Market Trends', icon: '📉', path: '/dealer/trends' },
+    { id: 'notifications', label: 'Notifications', icon: '🔔', badge: 2, path: '/dealer/notifications' },
   ];
 
   const kpiCards = [
@@ -31,7 +279,7 @@ const SalesAnalyticsPage = () => {
       value: 'Ksh 2.4M',
       change: '+12.5% vs last month',
       trend: 'up',
-      icon: DollarSign,
+      icon: '💰',
       color: 'emerald'
     },
     {
@@ -39,7 +287,7 @@ const SalesAnalyticsPage = () => {
       value: '856',
       change: '+5.2% vs last month',
       trend: 'up',
-      icon: ShoppingCart,
+      icon: '🛒',
       color: 'emerald'
     },
     {
@@ -47,7 +295,7 @@ const SalesAnalyticsPage = () => {
       value: 'Ksh 2,800',
       change: '-2.1% vs last month',
       trend: 'down',
-      icon: BarChart3,
+      icon: '📊',
       color: 'orange'
     },
     {
@@ -55,7 +303,7 @@ const SalesAnalyticsPage = () => {
       value: '68%',
       change: '+8% vs last month',
       trend: 'up',
-      icon: RefreshCw,
+      icon: '🔄',
       color: 'emerald'
     }
   ];
@@ -69,34 +317,12 @@ const SalesAnalyticsPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-800 to-emerald-900 md:flex relative">
-      {isSidebarOpen && (
-        <button
-          type="button"
-          onClick={() => setIsSidebarOpen(false)}
-          className="fixed inset-0 bg-black/40 z-30 md:hidden"
-          aria-label="Close menu"
-        />
-      )}
+    <div className="min-h-screen bg-gradient-to-br from-emerald-800 to-emerald-900 flex">
       {/* Sidebar */}
-      <div
-        className={`fixed inset-y-0 left-0 w-64 bg-gradient-to-b from-emerald-900 to-emerald-950 text-white p-6 flex flex-col shadow-2xl z-40 transform transition-transform duration-200 md:static md:translate-x-0 ${
-          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <div className="mb-8 flex items-start justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-emerald-100">FarmLease</h1>
-            <p className="text-emerald-300 text-sm">Agro-Dealer Hub</p>
-          </div>
-          <button
-            type="button"
-            onClick={() => setIsSidebarOpen(false)}
-            className="md:hidden text-emerald-200 hover:text-white"
-            aria-label="Close menu"
-          >
-            <X className="w-5 h-5" />
-          </button>
+      <div className="w-64 bg-gradient-to-b from-emerald-900 to-emerald-950 text-white p-6 flex flex-col shadow-2xl">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-emerald-100">FarmLease</h1>
+          <p className="text-emerald-300 text-sm">Agro-Dealer Hub</p>
         </div>
 
         <nav className="flex-1 space-y-2">
@@ -104,7 +330,6 @@ const SalesAnalyticsPage = () => {
             <Link
               key={item.id}
               to={item.path}
-              onClick={() => setIsSidebarOpen(false)}
               className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-200 ${
                 location.pathname === item.path
                   ? 'bg-emerald-700 text-white shadow-lg'
@@ -112,7 +337,7 @@ const SalesAnalyticsPage = () => {
               }`}
             >
               <div className="flex items-center gap-3">
-                <item.icon className="w-5 h-5" />
+                <span className="text-xl">{item.icon}</span>
                 <span className="font-medium text-sm">{item.label}</span>
               </div>
               {item.badge && (
@@ -139,8 +364,7 @@ const SalesAnalyticsPage = () => {
               <p className="text-xs text-emerald-300">Store Manager</p>
             </div>
           </Link>
-          <button className="mt-3 w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2">
-            <LogOut className="w-4 h-4" />
+          <button className="mt-3 w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors">
             Logout
           </button>
         </div>
@@ -148,42 +372,68 @@ const SalesAnalyticsPage = () => {
 
       {/* Main Content */}
       <div className="flex-1 bg-gray-50 overflow-hidden">
-        <div className="h-full overflow-y-auto p-4 sm:p-6 lg:p-8">
-          <div className="max-w-[1600px] mx-auto space-y-8">
+        <div className="h-full overflow-y-auto p-8">
+          <div className="space-y-8">
             {/* Header */}
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-              <div className="flex items-start justify-between gap-4">
-                <button
-                  type="button"
-                  onClick={() => setIsSidebarOpen(true)}
-                  className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg bg-white border border-gray-200 text-gray-600 shadow-sm"
-                  aria-label="Open menu"
-                >
-                  <Menu className="w-5 h-5" />
-                </button>
-                <div>
-                  <h2 className="text-3xl font-bold text-gray-800 mb-1">Sales Analytics</h2>
-                  <p className="text-gray-500 text-sm max-w-xl">
-                    Deep dive into your store's performance, revenue streams, and customer fulfillment data.
-                  </p>
-                </div>
+            <div className="flex flex-col md:flex-row justify-between items-end gap-4">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-800 mb-1">Sales Analytics</h2>
+                <p className="text-gray-500 text-sm max-w-xl">
+                  Deep dive into your store's performance, revenue streams, and customer fulfillment data.
+                </p>
               </div>
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-4">
                 <button className="flex px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg items-center gap-2 hover:bg-gray-50 transition shadow-sm text-sm">
-                  <Calendar className="w-4 h-4" />
+                  <span>📅</span>
                   <span>This Month</span>
                   <span className="ml-1">▼</span>
                 </button>
-                <button className="flex px-5 py-2 bg-emerald-700 text-white rounded-lg items-center gap-2 hover:bg-emerald-800 transition shadow-lg text-sm">
-                  <Download className="w-4 h-4" />
+                <button onClick={exportToCSV} className="flex px-5 py-2 bg-emerald-700 text-white rounded-lg items-center gap-2 hover:bg-emerald-800 transition shadow-lg text-sm">
+                  <span>📥</span>
                   <span className="font-medium">Export Report</span>
                 </button>
               </div>
             </div>
 
-            {/* KPI Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {kpiCards.map((card, index) => (
+            {/* Content Tabs */}
+            <div className="flex gap-2 border-b border-gray-200">
+              <button
+                onClick={() => setContentTab('overview')}
+                className={`px-6 py-3 text-sm font-medium transition-colors border-b-2 ${
+                  contentTab === 'overview'
+                    ? 'text-emerald-700 border-emerald-700'
+                    : 'text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                📊 Overview
+              </button>
+              <button
+                onClick={() => setContentTab('products')}
+                className={`px-6 py-3 text-sm font-medium transition-colors border-b-2 ${
+                  contentTab === 'products'
+                    ? 'text-emerald-700 border-emerald-700'
+                    : 'text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                📦 Products Analysis
+              </button>
+              <button
+                onClick={() => setContentTab('performance')}
+                className={`px-6 py-3 text-sm font-medium transition-colors border-b-2 ${
+                  contentTab === 'performance'
+                    ? 'text-emerald-700 border-emerald-700'
+                    : 'text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                📈 Performance
+              </button>
+            </div>
+
+            {/* Tab Content - Overview */}
+            {contentTab === 'overview' && (
+            <div className="space-y-6">
+              {/* KPI Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">{kpiCards.map((card, index) => (
                 <div
                   key={index}
                   className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition"
@@ -193,7 +443,7 @@ const SalesAnalyticsPage = () => {
                       {card.title}
                     </h3>
                     <div className={`p-1.5 bg-${card.color}-50 rounded-lg`}>
-                      <card.icon className="w-5 h-5 text-gray-700" />
+                      <span className="text-xl">{card.icon}</span>
                     </div>
                   </div>
                   <div className="flex items-baseline gap-1 mb-2">
@@ -468,6 +718,150 @@ const SalesAnalyticsPage = () => {
                 </div>
               </div>
             </div>
+            </div>
+            )}
+
+            {/* Tab Content - Products Analysis */}
+            {contentTab === 'products' && (
+            <div className="space-y-6">
+              <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                <h3 className="text-lg font-bold text-gray-800 mb-4">Product Performance</h3>
+                <div className="space-y-4">
+                  {topCategories.map((category, index) => (
+                    <div key={index} className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <h4 className="font-semibold text-gray-800">{category.name}</h4>
+                          <p className="text-xs text-gray-500">Revenue: Ksh {category.revenue.toLocaleString()}</p>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-sm font-bold text-emerald-700">{category.percentage}%</span>
+                          <p className="text-xs text-gray-500">of total</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                  <h3 className="text-lg font-bold text-gray-800 mb-4">Best Sellers</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg">
+                      <span className="text-sm font-medium text-gray-700">Hybrid Maize Seeds</span>
+                      <span className="text-sm font-bold text-emerald-700">145 units</span>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <span className="text-sm font-medium text-gray-700">NPK Fertilizer</span>
+                      <span className="text-sm font-bold text-gray-700">132 units</span>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <span className="text-sm font-medium text-gray-700">Insecticide</span>
+                      <span className="text-sm font-bold text-gray-700">98 units</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                  <h3 className="text-lg font-bold text-gray-800 mb-4">Low Performers</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
+                      <span className="text-sm font-medium text-gray-700">Irrigation Pipes</span>
+                      <span className="text-sm font-bold text-orange-700">12 units</span>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <span className="text-sm font-medium text-gray-700">Garden Tools</span>
+                      <span className="text-sm font-bold text-gray-700">18 units</span>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <span className="text-sm font-medium text-gray-700">Organic Manure</span>
+                      <span className="text-sm font-bold text-gray-700">25 units</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            )}
+
+            {/* Tab Content - Performance */}
+            {contentTab === 'performance' && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-bold text-gray-600 uppercase">Conversion Rate</h3>
+                    <span className="text-2xl">🎯</span>
+                  </div>
+                  <div className="text-3xl font-bold text-gray-800 mb-2">24.5%</div>
+                  <div className="flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full w-fit">
+                    <span>↑</span> +3.2% vs last month
+                  </div>
+                </div>
+                
+                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-bold text-gray-600 uppercase">Response Time</h3>
+                    <span className="text-2xl">⚡</span>
+                  </div>
+                  <div className="text-3xl font-bold text-gray-800 mb-2">2.3 hrs</div>
+                  <div className="flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full w-fit">
+                    <span>↓</span> -0.5hrs improvement
+                  </div>
+                </div>
+                
+                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-bold text-gray-600 uppercase">Fulfillment Rate</h3>
+                    <span className="text-2xl">📦</span>
+                  </div>
+                  <div className="text-3xl font-bold text-gray-800 mb-2">96.8%</div>
+                  <div className="flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full w-fit">
+                    <span>↑</span> +1.8% vs last month
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                <h3 className="text-lg font-bold text-gray-800 mb-4">Monthly Performance Trend</h3>
+                <div className="grid grid-cols-7 gap-4">
+                  {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, index) => (
+                    <div key={index} className="text-center">
+                      <div className="text-xs text-gray-500 mb-2">{day}</div>
+                      <div className="bg-emerald-100 rounded-lg h-32 flex items-end justify-center">
+                        <div 
+                          className="bg-emerald-700 w-full rounded-t-lg" 
+                          style={{ height: `${Math.random() * 80 + 20}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                <h3 className="text-lg font-bold text-gray-800 mb-4">Key Metrics</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <div className="text-xs text-gray-500 mb-1">Repeat Customers</div>
+                    <div className="text-xl font-bold text-gray-800">142</div>
+                  </div>
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <div className="text-xs text-gray-500 mb-1">New Customers</div>
+                    <div className="text-xl font-bold text-gray-800">89</div>
+                  </div>
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <div className="text-xs text-gray-500 mb-1">Avg. Rating</div>
+                    <div className="text-xl font-bold text-gray-800">4.7 ⭐</div>
+                  </div>
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <div className="text-xs text-gray-500 mb-1">Total Reviews</div>
+                    <div className="text-xl font-bold text-gray-800">234</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            )}
           </div>
         </div>
       </div>

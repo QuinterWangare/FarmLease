@@ -1,30 +1,23 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { 
-  LayoutDashboard, Package, ShoppingCart, ClipboardList, PlusCircle, 
-  MessageSquare, CreditCard, TrendingUp, TrendingDown, Bell,
-  Brain, Flame, Droplet, Eye, Sprout, Bug, Cherry, Tractor, Leaf, Droplets,
-  MapPin, SlidersHorizontal, Wheat, RefreshCw, Lightbulb, LogOut, Menu, X
-} from 'lucide-react';
 
 const MarketTrendsPage = () => {
   const location = useLocation();
   const [selectedRegion, setSelectedRegion] = useState('North Rift Region');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [timePeriod, setTimePeriod] = useState('30days');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dealer/dashboard' },
-    { id: 'inventory', label: 'Inventory', icon: Package, path: '/dealer/inventory' },
-    { id: 'orders', label: 'Orders', icon: ShoppingCart, badge: 5, path: '/dealer/orders' },
-    { id: 'products', label: 'My Products', icon: ClipboardList, path: '/dealer/products' },
-    { id: 'add-product', label: 'Add New Products', icon: PlusCircle, path: '/dealer/products/add' },
-    { id: 'queries', label: 'Customer Queries', icon: MessageSquare, path: '/dealer/queries' },
-    { id: 'transactions', label: 'Transactions', icon: CreditCard, path: '/dealer/transactions' },
-    { id: 'analytics', label: 'Sales Analytics', icon: TrendingUp, path: '/dealer/analytics' },
-    { id: 'trends', label: 'Market Trends', icon: TrendingDown, path: '/dealer/trends' },
-    { id: 'notifications', label: 'Notifications', icon: Bell, badge: 2, path: '/dealer/notifications' },
+    { id: 'dashboard', label: 'Dashboard', icon: '📊', path: '/dealer/dashboard' },
+    { id: 'inventory', label: 'Inventory', icon: '📦', path: '/dealer/inventory' },
+    { id: 'orders', label: 'Orders', icon: '🛒', badge: 5, path: '/dealer/orders' },
+    { id: 'products', label: 'My Products', icon: '📋', path: '/dealer/products' },
+    { id: 'add-product', label: 'Add New Products', icon: '➕', path: '/dealer/products/add' },
+    { id: 'queries', label: 'Customer Queries', icon: '💬', path: '/dealer/queries' },
+    { id: 'transactions', label: 'Transactions', icon: '💳', path: '/dealer/transactions' },
+    { id: 'analytics', label: 'Sales Analytics', icon: '📈', path: '/dealer/analytics' },
+    { id: 'trends', label: 'Market Trends', icon: '📉', path: '/dealer/trends' },
+    { id: 'notifications', label: 'Notifications', icon: '🔔', badge: 2, path: '/dealer/notifications' },
   ];
 
   const insightCards = [
@@ -33,7 +26,7 @@ const MarketTrendsPage = () => {
       title: 'Stock Up on Urea',
       description: 'Predicted 40% surge in demand next week due to upcoming maize top-dressing season.',
       badge: 'AI Forecast',
-      icon: Brain,
+      icon: '🧠',
       buttonText: 'View Suppliers',
       gradient: 'from-emerald-700 to-emerald-900',
       category: 'fertilizers'
@@ -43,9 +36,9 @@ const MarketTrendsPage = () => {
       title: 'Pest Control Alert',
       description: 'High Fall Armyworm activity reported in 150 nearby farms. Pesticide demand is critical.',
       badge: 'Hot Item',
-      icon: Flame,
+      icon: '🔥',
       metric: '+215% Search Volume',
-      metricIcon: TrendingUp,
+      metricIcon: '📈',
       bgColor: 'bg-white',
       badgeColor: 'bg-orange-100 text-orange-800',
       category: 'pesticides'
@@ -55,9 +48,9 @@ const MarketTrendsPage = () => {
       title: 'Irrigation Prep',
       description: 'Dry spell forecasted for next month. Farmers are inquiring about drip kits and pumps.',
       badge: 'Seasonal',
-      icon: Droplet,
+      icon: '💧',
       metric: 'High Viewing Interest',
-      metricIcon: Eye,
+      metricIcon: '👁️',
       bgColor: 'bg-white',
       badgeColor: 'bg-blue-100 text-blue-800',
       category: 'equipment'
@@ -67,9 +60,9 @@ const MarketTrendsPage = () => {
       title: 'Hybrid Seeds Shortage',
       description: 'DH04 and DK777 varieties running low. Early planters are stocking up ahead of long rains.',
       badge: 'Trending',
-      icon: Sprout,
+      icon: '🌱',
       metric: '+120% Orders',
-      metricIcon: Package,
+      metricIcon: '📦',
       bgColor: 'bg-white',
       badgeColor: 'bg-green-100 text-green-800',
       category: 'seeds'
@@ -102,7 +95,7 @@ const MarketTrendsPage = () => {
       trend: '+85%',
       trendColor: 'text-orange-600',
       price: 8500,
-      icon: Bug
+      icon: '🐛'
     },
     {
       id: 4,
@@ -120,7 +113,7 @@ const MarketTrendsPage = () => {
       trend: '+19%',
       trendColor: 'text-green-600',
       price: 3500,
-      icon: Cherry
+      icon: '🍅'
     },
     {
       id: 6,
@@ -129,7 +122,7 @@ const MarketTrendsPage = () => {
       trend: '+45%',
       trendColor: 'text-orange-600',
       price: 45000,
-      icon: Tractor
+      icon: '🚜'
     },
     {
       id: 7,
@@ -138,7 +131,7 @@ const MarketTrendsPage = () => {
       trend: '+67%',
       trendColor: 'text-orange-600',
       price: 1200,
-      icon: Leaf
+      icon: '🌿'
     },
     {
       id: 8,
@@ -147,7 +140,7 @@ const MarketTrendsPage = () => {
       trend: '+92%',
       trendColor: 'text-orange-600',
       price: 12500,
-      icon: Droplets
+      icon: '💦'
     }
   ];
 
@@ -194,34 +187,12 @@ const MarketTrendsPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-800 to-emerald-900 md:flex relative">
-      {isSidebarOpen && (
-        <button
-          type="button"
-          onClick={() => setIsSidebarOpen(false)}
-          className="fixed inset-0 bg-black/40 z-30 md:hidden"
-          aria-label="Close menu"
-        />
-      )}
+    <div className="min-h-screen bg-gradient-to-br from-emerald-800 to-emerald-900 flex">
       {/* Sidebar */}
-      <div
-        className={`fixed inset-y-0 left-0 w-64 bg-gradient-to-b from-emerald-900 to-emerald-950 text-white p-6 flex flex-col shadow-2xl z-40 transform transition-transform duration-200 md:static md:translate-x-0 ${
-          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <div className="mb-8 flex items-start justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-emerald-100">FarmLease</h1>
-            <p className="text-emerald-300 text-sm">Agro-Dealer Hub</p>
-          </div>
-          <button
-            type="button"
-            onClick={() => setIsSidebarOpen(false)}
-            className="md:hidden text-emerald-200 hover:text-white"
-            aria-label="Close menu"
-          >
-            <X className="w-5 h-5" />
-          </button>
+      <div className="w-64 bg-gradient-to-b from-emerald-900 to-emerald-950 text-white p-6 flex flex-col shadow-2xl">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-emerald-100">FarmLease</h1>
+          <p className="text-emerald-300 text-sm">Agro-Dealer Hub</p>
         </div>
 
         <nav className="flex-1 space-y-2">
@@ -229,7 +200,6 @@ const MarketTrendsPage = () => {
             <Link
               key={item.id}
               to={item.path}
-              onClick={() => setIsSidebarOpen(false)}
               className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-200 ${
                 location.pathname === item.path
                   ? 'bg-emerald-700 text-white shadow-lg'
@@ -237,7 +207,7 @@ const MarketTrendsPage = () => {
               }`}
             >
               <div className="flex items-center gap-3">
-                <item.icon className="w-5 h-5" />
+                <span className="text-xl">{item.icon}</span>
                 <span className="font-medium text-sm">{item.label}</span>
               </div>
               {item.badge && (
@@ -264,8 +234,7 @@ const MarketTrendsPage = () => {
               <p className="text-xs text-emerald-300">Store Manager</p>
             </div>
           </Link>
-          <button className="mt-3 w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2">
-            <LogOut className="w-4 h-4" />
+          <button className="mt-3 w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors">
             Logout
           </button>
         </div>
@@ -273,29 +242,19 @@ const MarketTrendsPage = () => {
 
       {/* Main Content */}
       <div className="flex-1 bg-gray-50 overflow-hidden">
-        <div className="h-full overflow-y-auto p-4 sm:p-6 lg:p-8">
-          <div className="max-w-[1600px] mx-auto space-y-8 pb-8">
+        <div className="h-full overflow-y-auto p-8">
+          <div className="space-y-8 pb-8">
             {/* Header */}
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-              <div className="flex items-start justify-between gap-4">
-                <button
-                  type="button"
-                  onClick={() => setIsSidebarOpen(true)}
-                  className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg bg-white border border-gray-200 text-gray-600 shadow-sm"
-                  aria-label="Open menu"
-                >
-                  <Menu className="w-5 h-5" />
-                </button>
-                <div>
-                  <h2 className="text-3xl font-bold text-gray-800 mb-1">Market Trends</h2>
-                  <p className="text-gray-500 text-sm max-w-xl">
-                    Real-time insights from the FarmLease ecosystem to optimize your stock.
-                  </p>
-                </div>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-800 mb-1">Market Trends</h2>
+                <p className="text-gray-500 text-sm max-w-xl">
+                  Real-time insights from the FarmLease ecosystem to optimize your stock.
+                </p>
               </div>
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-4">
                 <div className="bg-white border border-gray-200 rounded-lg px-3 py-2 flex items-center gap-2 shadow-sm">
-                  <MapPin className="w-4 h-4 text-gray-400" />
+                  <span className="text-gray-400 text-sm">📍</span>
                   <select
                     value={selectedRegion}
                     onChange={(e) => setSelectedRegion(e.target.value)}
@@ -307,15 +266,15 @@ const MarketTrendsPage = () => {
                   </select>
                 </div>
                 <button className="flex px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg items-center gap-2 hover:bg-gray-50 transition shadow-sm">
-                  <SlidersHorizontal className="w-4 h-4" />
+                  <span className="text-lg">🎛️</span>
                   <span className="font-medium text-sm">Filters</span>
                 </button>
               </div>
             </div>
 
             {/* Filter Tabs */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-2 overflow-x-auto">
-              <div className="flex items-center gap-2 flex-wrap md:flex-nowrap min-w-max">
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <button
                   onClick={() => setCategoryFilter('all')}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
@@ -339,8 +298,7 @@ const MarketTrendsPage = () => {
                       : 'text-gray-600 hover:bg-gray-50'
                   }`}
                 >
-                  <Wheat className="w-4 h-4" />
-                  <span>Fertilizers</span>
+                  <span>🌾 Fertilizers</span>
                   <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
                     categoryFilter === 'fertilizers' ? 'bg-emerald-800 text-emerald-100' : 'bg-gray-100 text-gray-600'
                   }`}>
@@ -355,8 +313,7 @@ const MarketTrendsPage = () => {
                       : 'text-gray-600 hover:bg-gray-50'
                   }`}
                 >
-                  <Sprout className="w-4 h-4" />
-                  <span>Seeds</span>
+                  <span>🌱 Seeds</span>
                   <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
                     categoryFilter === 'seeds' ? 'bg-emerald-800 text-emerald-100' : 'bg-gray-100 text-gray-600'
                   }`}>
@@ -371,8 +328,7 @@ const MarketTrendsPage = () => {
                       : 'text-gray-600 hover:bg-gray-50'
                   }`}
                 >
-                  <Bug className="w-4 h-4" />
-                  <span>Pesticides</span>
+                  <span>🐛 Pesticides</span>
                   <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
                     categoryFilter === 'pesticides' ? 'bg-emerald-800 text-emerald-100' : 'bg-gray-100 text-gray-600'
                   }`}>
@@ -387,15 +343,14 @@ const MarketTrendsPage = () => {
                       : 'text-gray-600 hover:bg-gray-50'
                   }`}
                 >
-                  <Tractor className="w-4 h-4" />
-                  <span>Equipment</span>
+                  <span>🚜 Equipment</span>
                   <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
                     categoryFilter === 'equipment' ? 'bg-emerald-800 text-emerald-100' : 'bg-gray-100 text-gray-600'
                   }`}>
                     {categoryCounts.equipment}
                   </span>
                 </button>
-                <div className="w-full md:w-auto md:ml-auto flex flex-wrap gap-2">
+                <div className="ml-auto flex gap-2">
                   <button
                     onClick={() => setTimePeriod('7days')}
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
@@ -442,7 +397,7 @@ const MarketTrendsPage = () => {
                           <div className="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
                           <div className="flex justify-between items-start mb-4 relative z-10">
                             <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
-                            <card.icon className="w-6 h-6 text-white" />
+                              <span className="text-2xl">{card.icon}</span>
                             </div>
                             <span className="bg-white/20 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide backdrop-blur-md">
                               {card.badge}
@@ -462,7 +417,7 @@ const MarketTrendsPage = () => {
                         <div key={index} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:border-emerald-700/30 transition-all">
                           <div className="flex justify-between items-start mb-4">
                             <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center">
-                              <card.icon className="w-6 h-6 text-orange-600" />
+                              <span className="text-2xl">{card.icon}</span>
                             </div>
                             <span className={`text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide ${card.badgeColor || 'bg-orange-100 text-orange-800'}`}>
                               {card.badge}
@@ -474,7 +429,7 @@ const MarketTrendsPage = () => {
                           </p>
                           {card.metric && (
                             <div className="flex items-center gap-2 text-xs font-bold text-orange-600">
-                              <card.metricIcon className="w-4 h-4" />
+                              <span>{card.metricIcon}</span>
                               <span>{card.metric}</span>
                             </div>
                           )}
@@ -587,7 +542,7 @@ const MarketTrendsPage = () => {
                     </button>
                   </div>
                   <div className="overflow-x-auto">
-                    <table className="w-full min-w-[720px] text-left text-sm text-gray-600">
+                    <table className="w-full text-left text-sm text-gray-600">
                       <thead className="bg-gray-50 text-xs uppercase text-gray-500 font-medium">
                         <tr>
                           <th className="px-6 py-4 tracking-wider">Product Name</th>
@@ -610,10 +565,8 @@ const MarketTrendsPage = () => {
                                       alt={product.name}
                                       className="h-full object-contain"
                                     />
-                                  ) : product.icon ? (
-                                    <product.icon className="w-5 h-5 text-gray-600" />
                                   ) : (
-                                    <span className="text-lg">?</span>
+                                    <span className="text-lg">{product.icon}</span>
                                   )}
                                 </div>
                                 {product.name}
@@ -622,7 +575,7 @@ const MarketTrendsPage = () => {
                             <td className="px-6 py-4 text-gray-500 capitalize">{product.category}</td>
                             <td className="px-6 py-4">
                               <div className={`flex items-center gap-2 ${product.trendColor} font-bold text-xs`}>
-                                <TrendingUp className="w-4 h-4" /> {product.trend}
+                                <span>📈</span> {product.trend}
                               </div>
                             </td>
                             <td className="px-6 py-4 font-medium">Ksh {product.price.toLocaleString()}</td>
@@ -683,10 +636,10 @@ const MarketTrendsPage = () => {
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="font-bold text-lg text-gray-800">Regional Updates</h3>
                     <button className="text-gray-400 hover:text-gray-800 transition">
-                      <RefreshCw className="w-5 h-5" />
+                      <span className="text-xl">🔄</span>
                     </button>
                   </div>
-                  <div className="space-y-6 overflow-y-auto pr-2 max-h-none md:max-h-[500px]">
+                  <div className="space-y-6 overflow-y-auto pr-2 max-h-[500px]">
                     {regionalUpdates.map((update) => (
                       <div
                         key={update.id}
@@ -716,7 +669,7 @@ const MarketTrendsPage = () => {
                   <div className="mt-6 pt-4 border-t border-gray-100">
                     <div className="bg-emerald-50 rounded-xl p-4">
                       <div className="flex gap-3 mb-2">
-                        <Lightbulb className="w-5 h-5 text-emerald-700" />
+                        <span className="text-emerald-700 text-xl">💡</span>
                         <h4 className="font-bold text-emerald-700 text-sm">Dealer Tip</h4>
                       </div>
                       <p className="text-xs text-emerald-800/80 leading-relaxed">

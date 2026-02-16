@@ -24,6 +24,7 @@ const RegisterPage = () => {
     { value: USER_ROLES.OWNER, label: 'Farm Owner' },
     { value: USER_ROLES.LESSEE, label: 'Farmer/Lessee' },
     { value: USER_ROLES.DEALER, label: 'Agro-Dealer' },
+    // Admin role is hidden from registration
   ];
 
   const handleChange = (e) => {

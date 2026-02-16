@@ -1,9 +1,17 @@
-// User Roles
+// User Roles (matching backend values)
 export const USER_ROLES = {
-  OWNER: 'OWNER',
-  LESSEE: 'LESSEE',
-  DEALER: 'DEALER',
-  ADMIN: 'ADMIN',
+  OWNER: 'landowner',
+  LESSEE: 'farmer',
+  DEALER: 'dealer',
+  ADMIN: 'admin',
+};
+
+// User Role Display Names
+export const USER_ROLE_LABELS = {
+  landowner: 'Farm Owner',
+  farmer: 'Farmer/Lessee',
+  dealer: 'Agro-Dealer',
+  admin: 'Administrator',
 };
 
 // Land Status

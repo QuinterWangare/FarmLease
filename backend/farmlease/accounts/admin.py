@@ -2,31 +2,36 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import User
 
+@admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    # Fields to display in the list view
-    list_display = ("username", "email", "role", "is_staff", "is_active")
+    list_display = [
+        'username',
+        'email',
+        'role',
+        'is_staff',
+        'is_verified',
+        'is_active',
+        'created_at',
+    ]
+    list_filter = ['role', 'is_staff', 'is_verified', 'is_active', 'created_at']
+    search_fields = ['username', 'email', 'first_name', 'last_name', 'phone_number']
     
-    # Fields to filter by
-    list_filter = ("role", "is_staff", "is_active")
-    
-    # Fields to show when editing a user
-    fieldsets = (
-        (None, {"fields": ("username", "email", "password")}),
-        ("Personal Info", {"fields": ("first_name", "last_name", "phone_number")}),
-        ("Permissions", {"fields": ("role", "is_staff", "is_active", "is_superuser", "groups", "user_permissions")}),
-        ("Important Dates", {"fields": ("last_login", "date_joined")}),
-    )
-
-    add_fieldsets = (
-        (None, {
-            "classes": ("wide",),
-            "fields": ("username", "email", "role", "phone_number", "password1", "password2", "is_staff", "is_active"),
+    fieldsets = BaseUserAdmin.fieldsets + (
+        ('Additional Info', {
+            'fields': (
+                'role',
+                'phone_number',
+                'address',
+                'county',
+                'id_number',
+                'profile_picture',
+                'is_verified',
+            )
         }),
     )
-
-    search_fields = ("username", "email", "phone_number")
-    ordering = ("username",)
-    filter_horizontal = ("groups", "user_permissions",)
-
-# Register your User model
-admin.site.register(User, UserAdmin)
+    
+    add_fieldsets = BaseUserAdmin.add_fieldsets + (
+        ('Additional Info', {
+            'fields': ('role', 'email', 'first_name', 'last_name', 'phone_number')
+        }),
+    )

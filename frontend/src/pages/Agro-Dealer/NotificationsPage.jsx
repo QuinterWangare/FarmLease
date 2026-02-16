@@ -1,35 +1,29 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { 
-  LayoutDashboard, Package, ShoppingCart, ClipboardList, PlusCircle, 
-  MessageSquare, CreditCard, TrendingUp, TrendingDown, Bell,
-  AlertTriangle, CheckCircle, Info, Scale, DollarSign, Settings, LogOut, Menu, X
-} from 'lucide-react';
 
 const NotificationsPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('notifications');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dealer/dashboard' },
-    { id: 'inventory', label: 'Inventory', icon: Package, path: '/dealer/inventory' },
-    { id: 'orders', label: 'Orders', icon: ShoppingCart, badge: 5, path: '/dealer/orders' },
-    { id: 'products', label: 'My Products', icon: ClipboardList, path: '/dealer/products' },
-    { id: 'add-product', label: 'Add New Products', icon: PlusCircle, path: '/dealer/products/add' },
-    { id: 'queries', label: 'Customer Queries', icon: MessageSquare, path: '/dealer/queries' },
-    { id: 'transactions', label: 'Transactions', icon: CreditCard, path: '/dealer/transactions' },
-    { id: 'analytics', label: 'Sales Analytics', icon: TrendingUp, path: '/dealer/analytics' },
-    { id: 'trends', label: 'Market Trends', icon: TrendingDown, path: '/dealer/trends' },
-    { id: 'notifications', label: 'Notifications', icon: Bell, path: '/dealer/notifications' },
+    { id: 'dashboard', label: 'Dashboard', icon: '📊', path: '/dealer/dashboard' },
+    { id: 'inventory', label: 'Inventory', icon: '📦', path: '/dealer/inventory' },
+    { id: 'orders', label: 'Orders', icon: '🛒', badge: 5, path: '/dealer/orders' },
+    { id: 'products', label: 'My Products', icon: '📋', path: '/dealer/products' },
+    { id: 'add-product', label: 'Add New Products', icon: '➕', path: '/dealer/products/add' },
+    { id: 'queries', label: 'Customer Queries', icon: '💬', path: '/dealer/queries' },
+    { id: 'transactions', label: 'Transactions', icon: '💳', path: '/dealer/transactions' },
+    { id: 'analytics', label: 'Sales Analytics', icon: '📈', path: '/dealer/analytics' },
+    { id: 'trends', label: 'Market Trends', icon: '📉', path: '/dealer/trends' },
+    { id: 'notifications', label: 'Notifications', icon: '🔔', path: '/dealer/notifications' },
   ];
 
   const todayNotifications = [
     {
       id: 1,
       type: 'warning',
-      icon: AlertTriangle,
+      icon: '⚠️',
       iconBg: 'bg-orange-50',
       iconColor: 'text-orange-600',
       title: 'Low Stock Alert: Hybrid Maize Seeds',
@@ -44,7 +38,7 @@ const NotificationsPage = () => {
     {
       id: 2,
       type: 'success',
-      icon: CheckCircle,
+      icon: '✓',
       iconBg: 'bg-emerald-50',
       iconColor: 'text-emerald-700',
       title: 'Order #4492 Completed',
@@ -58,7 +52,7 @@ const NotificationsPage = () => {
     {
       id: 3,
       type: 'info',
-      icon: Info,
+      icon: 'ℹ️',
       iconBg: 'bg-amber-50',
       iconColor: 'text-amber-800',
       title: 'Platform Maintenance Scheduled',
@@ -73,7 +67,7 @@ const NotificationsPage = () => {
     {
       id: 4,
       type: 'dispute',
-      icon: Scale,
+      icon: '⚖️',
       iconBg: 'bg-amber-50',
       iconColor: 'text-amber-800',
       title: 'New Dispute Report: Order #4480',
@@ -88,7 +82,7 @@ const NotificationsPage = () => {
     {
       id: 5,
       type: 'inventory',
-      icon: Package,
+      icon: '📦',
       iconBg: 'bg-emerald-50',
       iconColor: 'text-emerald-700',
       title: 'New Inventory Added',
@@ -103,7 +97,7 @@ const NotificationsPage = () => {
     {
       id: 6,
       type: 'payment',
-      icon: DollarSign,
+      icon: '💰',
       iconBg: 'bg-emerald-50',
       iconColor: 'text-emerald-700',
       title: 'Direct Payment Received',
@@ -134,34 +128,12 @@ const NotificationsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-800 to-emerald-900 md:flex relative">
-      {isSidebarOpen && (
-        <button
-          type="button"
-          onClick={() => setIsSidebarOpen(false)}
-          className="fixed inset-0 bg-black/40 z-30 md:hidden"
-          aria-label="Close menu"
-        />
-      )}
+    <div className="min-h-screen bg-gradient-to-br from-emerald-800 to-emerald-900 flex">
       {/* Sidebar */}
-      <div
-        className={`fixed inset-y-0 left-0 w-64 bg-gradient-to-b from-emerald-900 to-emerald-950 text-white p-6 flex flex-col shadow-2xl z-40 transform transition-transform duration-200 md:static md:translate-x-0 ${
-          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <div className="mb-8 flex items-start justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-emerald-100">FarmLease</h1>
-            <p className="text-emerald-300 text-sm">Agro-Dealer Hub</p>
-          </div>
-          <button
-            type="button"
-            onClick={() => setIsSidebarOpen(false)}
-            className="md:hidden text-emerald-200 hover:text-white"
-            aria-label="Close menu"
-          >
-            <X className="w-5 h-5" />
-          </button>
+      <div className="w-64 bg-gradient-to-b from-emerald-900 to-emerald-950 text-white p-6 flex flex-col shadow-2xl">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-emerald-100">FarmLease</h1>
+          <p className="text-emerald-300 text-sm">Agro-Dealer Hub</p>
         </div>
 
         <nav className="flex-1 space-y-2">
@@ -169,7 +141,6 @@ const NotificationsPage = () => {
             <Link
               key={item.id}
               to={item.path}
-              onClick={() => setIsSidebarOpen(false)}
               className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-200 ${
                 location.pathname === item.path
                   ? 'bg-emerald-700 text-white shadow-lg'
@@ -177,7 +148,7 @@ const NotificationsPage = () => {
               }`}
             >
               <div className="flex items-center gap-3">
-                <item.icon className="w-5 h-5" />
+                <span className="text-xl">{item.icon}</span>
                 <span className="font-medium text-sm">{item.label}</span>
               </div>
               {item.badge && (
@@ -204,8 +175,7 @@ const NotificationsPage = () => {
               <p className="text-xs text-emerald-300">Store Manager</p>
             </div>
           </Link>
-          <button className="mt-3 w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2">
-            <LogOut className="w-4 h-4" />
+          <button className="mt-3 w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors">
             Logout
           </button>
         </div>
@@ -213,36 +183,26 @@ const NotificationsPage = () => {
 
       {/* Main Content */}
       <div className="flex-1 bg-gray-50 overflow-hidden">
-        <div className="h-full overflow-y-auto p-4 sm:p-6 lg:p-8">
-          <div className="max-w-5xl mx-auto space-y-6">
+        <div className="h-full overflow-y-auto p-8">
+          <div className="space-y-6">
             {/* Header */}
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-              <div className="flex items-start justify-between gap-4">
-                <button
-                  type="button"
-                  onClick={() => setIsSidebarOpen(true)}
-                  className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg bg-white border border-gray-200 text-gray-600 shadow-sm"
-                  aria-label="Open menu"
-                >
-                  <Menu className="w-5 h-5" />
-                </button>
-                <div>
-                  <h2 className="text-3xl font-bold text-gray-800 mb-1">Notifications</h2>
-                  <p className="text-gray-500 text-sm max-w-xl">
-                    Manage your store alerts, order updates, and system messages.
-                  </p>
-                </div>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-800 mb-1">Notifications</h2>
+                <p className="text-gray-500 text-sm max-w-xl">
+                  Manage your store alerts, order updates, and system messages.
+                </p>
               </div>
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-4">
                 <button
                   onClick={handleMarkAllAsRead}
                   className="text-sm text-emerald-700 font-bold hover:underline"
                 >
                   Mark all as read
                 </button>
-                <div className="hidden sm:block h-6 w-px bg-gray-200"></div>
+                <div className="h-6 w-px bg-gray-200"></div>
                 <button className="flex px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg items-center gap-2 hover:bg-gray-50 transition shadow-sm">
-                  <Settings className="w-4 h-4" />
+                  <span className="text-lg">⚙️</span>
                   <span className="font-medium text-sm">Filter</span>
                 </button>
               </div>
@@ -263,7 +223,7 @@ const NotificationsPage = () => {
                   className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm hover:shadow-md transition-all group flex flex-col sm:flex-row gap-4 relative"
                 >
                   <div className={`w-12 h-12 rounded-full ${notification.iconBg} flex items-center justify-center shrink-0`}>
-                    <notification.icon className={`w-6 h-6 ${notification.iconColor}`} />
+                    <span className="text-xl">{notification.icon}</span>
                   </div>
                   <div className="flex-1">
                     <div className="flex justify-between items-start">
@@ -298,7 +258,7 @@ const NotificationsPage = () => {
                   className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm hover:shadow-md transition-all group flex flex-col sm:flex-row gap-4 opacity-75 hover:opacity-100"
                 >
                   <div className={`w-12 h-12 rounded-full ${notification.iconBg} flex items-center justify-center shrink-0`}>
-                    <notification.icon className={`w-6 h-6 ${notification.iconColor}`} />
+                    <span className="text-xl">{notification.icon}</span>
                   </div>
                   <div className="flex-1">
                     <div className="flex justify-between items-start">
@@ -330,7 +290,7 @@ const NotificationsPage = () => {
                   className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm hover:shadow-md transition-all group flex flex-col sm:flex-row gap-4 opacity-60 hover:opacity-100"
                 >
                   <div className={`w-12 h-12 rounded-full ${notification.iconBg} flex items-center justify-center shrink-0`}>
-                    <notification.icon className={`w-6 h-6 ${notification.iconColor}`} />
+                    <span className="text-xl">{notification.icon}</span>
                   </div>
                   <div className="flex-1">
                     <div className="flex justify-between items-start">

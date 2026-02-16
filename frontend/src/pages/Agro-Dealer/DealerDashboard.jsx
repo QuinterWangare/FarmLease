@@ -1,33 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Package, 
-  ShoppingCart, 
-  ClipboardList, 
-  PlusCircle, 
-  MessageSquare, 
-  CreditCard, 
-  TrendingUp, 
-  TrendingDown, 
-  Bell, 
-  Calendar, 
-  Truck, 
-  Store, 
-  DollarSign,
-  LogOut,
-  Star,
-  CheckCircle,
-  AlertTriangle,
-  Menu,
-  X
-} from 'lucide-react';
 
 const DealerDashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [timePeriod, setTimePeriod] = useState('month');
   const [showPeriodMenu, setShowPeriodMenu] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -96,16 +73,16 @@ const DealerDashboard = () => {
   };
 
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dealer/dashboard' },
-    { id: 'inventory', label: 'Inventory', icon: Package, path: '/dealer/inventory' },
-    { id: 'orders', label: 'Orders', icon: ShoppingCart, badge: 5, path: '/dealer/orders' },
-    { id: 'products', label: 'My Products', icon: ClipboardList, path: '/dealer/products' },
-    { id: 'add-product', label: 'Add New Products', icon: PlusCircle, path: '/dealer/products/add' },
-    { id: 'queries', label: 'Customer Queries', icon: MessageSquare, path: '/dealer/queries' },
-    { id: 'transactions', label: 'Transactions', icon: CreditCard, path: '/dealer/transactions' },
-    { id: 'analytics', label: 'Sales Analytics', icon: TrendingUp, path: '/dealer/analytics' },
-    { id: 'trends', label: 'Market Trends', icon: TrendingDown, path: '/dealer/trends' },
-    { id: 'notifications', label: 'Notifications', icon: Bell, path: '/dealer/notifications' },
+    { id: 'dashboard', label: 'Dashboard', icon: '📊', path: '/dealer/dashboard' },
+    { id: 'inventory', label: 'Inventory', icon: '📦', path: '/dealer/inventory' },
+    { id: 'orders', label: 'Orders', icon: '🛒', badge: 5, path: '/dealer/orders' },
+    { id: 'products', label: 'My Products', icon: '📋', path: '/dealer/products' },
+    { id: 'add-product', label: 'Add New Products', icon: '➕', path: '/dealer/products/add' },
+    { id: 'queries', label: 'Customer Queries', icon: '💬', path: '/dealer/queries' },
+    { id: 'transactions', label: 'Transactions', icon: '💳', path: '/dealer/transactions' },
+    { id: 'analytics', label: 'Sales Analytics', icon: '📈', path: '/dealer/analytics' },
+    { id: 'trends', label: 'Market Trends', icon: '📉', path: '/dealer/trends' },
+    { id: 'notifications', label: 'Notifications', icon: '🔔', path: '/dealer/notifications' },
   ];
 
   const inquiries = [
@@ -140,41 +117,19 @@ const DealerDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen md:flex relative bg-gray-50">
-      {/* Mobile Overlay */}
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
-          onClick={() => setIsSidebarOpen(false)}
-        ></div>
-      )}
-
+    <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
-      <div
-        className={
-          `fixed md:static w-64 bg-gradient-to-b from-emerald-800 to-emerald-900 text-white flex flex-col h-screen z-40 transition-transform duration-300 ease-in-out ${
-            isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          } md:translate-x-0`
-        }
-      >
+      <div className="w-64 bg-gradient-to-b from-emerald-800 to-emerald-900 text-white flex flex-col">
         {/* Logo */}
         <div className="p-6 border-b border-emerald-700">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                <span className="text-emerald-800 font-bold text-xl">🌾</span>
-              </div>
-              <div>
-                <h1 className="text-lg font-bold">FarmLease</h1>
-                <p className="text-xs text-emerald-300">DEALER HUB</p>
-              </div>
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+              <span className="text-emerald-800 font-bold text-xl">🌾</span>
             </div>
-            <button
-              onClick={() => setIsSidebarOpen(false)}
-              className="md:hidden text-white hover:bg-emerald-700 p-2 rounded-lg transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            <div>
+              <h1 className="text-lg font-bold">FarmLease</h1>
+              <p className="text-xs text-emerald-300">DEALER HUB</p>
+            </div>
           </div>
         </div>
 
@@ -184,14 +139,13 @@ const DealerDashboard = () => {
             <Link
               key={item.id}
               to={item.path}
-              onClick={() => setIsSidebarOpen(false)}
               className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${
                 location.pathname === item.path
                   ? 'bg-emerald-700 shadow-lg'
                   : 'hover:bg-emerald-700/50'
               }`}
             >
-              <item.icon className="w-5 h-5" />
+              <span className="text-xl">{item.icon}</span>
               <span className="flex-1 text-left text-sm font-medium">{item.label}</span>
               {item.badge && (
                 <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
@@ -219,7 +173,7 @@ const DealerDashboard = () => {
             </div>
           </Link>
           <button className="w-full flex items-center space-x-2 px-4 py-2 bg-emerald-700 hover:bg-emerald-600 rounded-lg transition-colors">
-            <LogOut className="w-4 h-4" />
+            <span>🚪</span>
             <span className="text-sm font-medium">LOGOUT</span>
           </button>
         </div>
@@ -228,19 +182,11 @@ const DealerDashboard = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200 p-4 sm:p-6 lg:px-8 lg:py-6">
+        <div className="bg-white border-b border-gray-200 px-8 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4 flex-1">
-              <button
-                onClick={() => setIsSidebarOpen(true)}
-                className="md:hidden text-gray-600 hover:text-gray-900 hover:bg-gray-100 p-2 rounded-lg transition-colors"
-              >
-                <Menu className="w-6 h-6" />
-              </button>
-              <div>
-                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Dashboard</h2>
-                <p className="text-gray-600 mt-1 text-sm sm:text-base">Welcome back to your Agro-Dealer Hub. Here's what's happening in your store today.</p>
-              </div>
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900">Dashboard</h2>
+              <p className="text-gray-600 mt-1">Welcome back to your Agro-Dealer Hub. Here's what's happening in your store today.</p>
             </div>
             <div className="flex items-center space-x-3">
               <div className="relative">
@@ -248,7 +194,7 @@ const DealerDashboard = () => {
                   onClick={() => setShowPeriodMenu(!showPeriodMenu)}
                   className="px-4 py-2 border border-gray-300 rounded-lg flex items-center space-x-2 hover:bg-gray-50"
                 >
-                  <Calendar className="w-4 h-4" />
+                  <span>📅</span>
                   <span className="text-sm font-medium">
                     {getDateRangeLabel()}
                   </span>
@@ -348,7 +294,7 @@ const DealerDashboard = () => {
                 )}
               </div>
               <Link to="/dealer/products/add" className="px-6 py-2 bg-emerald-800 text-white rounded-lg flex items-center space-x-2 hover:bg-emerald-700">
-                <PlusCircle className="w-4 h-4" />
+                <span>➕</span>
                 <span className="text-sm font-medium">New Product</span>
               </Link>
             </div>
@@ -357,12 +303,12 @@ const DealerDashboard = () => {
 
         {/* Content Area */}
         <div className="flex-1 overflow-y-auto">
-          <div className="p-4 sm:p-6 lg:p-8">
-            <div className="flex flex-col lg:flex-row gap-6">
+          <div className="p-8">
+            <div className="flex gap-6">
               {/* Left Side - Main Content */}
               <div className="flex-1 space-y-6">
                 {/* Metrics Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
+                <div className="grid grid-cols-4 gap-6">
                   {/* Total Sales */}
                   <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
                     <div className="flex items-start justify-between mb-4">
@@ -371,7 +317,7 @@ const DealerDashboard = () => {
                         <h3 className="text-3xl font-bold text-gray-900">Ksh 1.2M</h3>
                       </div>
                       <div className="p-2 bg-emerald-100 rounded-lg">
-                        <DollarSign className="w-6 h-6 text-emerald-700" />
+                        <span className="text-xl">💰</span>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -390,7 +336,7 @@ const DealerDashboard = () => {
                         <h3 className="text-3xl font-bold text-gray-900">42</h3>
                       </div>
                       <div className="p-2 bg-emerald-100 rounded-lg">
-                        <CheckCircle className="w-6 h-6 text-emerald-700" />
+                        <span className="text-xl">✅</span>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -409,7 +355,7 @@ const DealerDashboard = () => {
                         <h3 className="text-3xl font-bold text-gray-900">8 <span className="text-sm text-gray-500">Items</span></h3>
                       </div>
                       <div className="p-2 bg-orange-100 rounded-lg">
-                        <AlertTriangle className="w-6 h-6 text-orange-600" />
+                        <span className="text-xl">⚠️</span>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -428,7 +374,7 @@ const DealerDashboard = () => {
                         <h3 className="text-3xl font-bold text-gray-900">4.8 <span className="text-sm text-gray-500">/5.0</span></h3>
                       </div>
                       <div className="p-2 bg-emerald-100 rounded-lg">
-                        <Star className="w-6 h-6 text-emerald-700 fill-emerald-700" />
+                        <span className="text-xl">⭐</span>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -446,17 +392,17 @@ const DealerDashboard = () => {
                     <h3 className="text-lg font-bold text-gray-900">Fulfillment Overview</h3>
                     <span className="text-xs text-gray-500">Today's Activity</span>
                   </div>
-                  <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <div className="p-6 grid grid-cols-2 gap-8">
                     {/* Delivery Stats */}
                     <div>
                       <div className="flex items-center space-x-2 mb-4">
-                        <Truck className="w-7 h-7 text-emerald-700" />
+                        <span className="text-2xl">🚚</span>
                         <div>
                           <p className="font-semibold text-gray-900">Delivery to Address</p>
                           <p className="text-xs text-gray-500">LOGISTICS</p>
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                      <div className="grid grid-cols-4 gap-4">
                         <div className="text-center">
                           <p className="text-2xl font-bold text-gray-900">12</p>
                           <p className="text-xs text-orange-600 font-medium">Pending</p>
@@ -479,13 +425,13 @@ const DealerDashboard = () => {
                     {/* Pickup Stats */}
                     <div>
                       <div className="flex items-center space-x-2 mb-4">
-                        <Store className="w-7 h-7 text-emerald-700" />
+                        <span className="text-2xl">🏪</span>
                         <div>
                           <p className="font-semibold text-gray-900">Customer Pick-up</p>
                           <p className="text-xs text-gray-500">IN-STORE</p>
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-3 gap-4">
                         <div className="text-center">
                           <p className="text-2xl font-bold text-gray-900">3</p>
                           <p className="text-xs text-emerald-600 font-medium">Ready</p>

@@ -1,9 +1,7 @@
-import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import authService from '../services/authService';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-
-const DEVELOPMENT_MODE = import.meta.env.DEV;
 
 const AuthContext = createContext(null);
 
@@ -16,7 +14,18 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  // DEVELOPMENT MODE: Set mock user to bypass authentication
+  const DEVELOPMENT_MODE = true; // Set to false when backend is ready
+  
+  const mockUser = {
+    id: 1,
+    name: 'David M.',
+    email: 'david@farmlease.com',
+    role: 'farmer',
+    phone_number: '+254712345678',
+  };
+
+  const [user, setUser] = useState(DEVELOPMENT_MODE ? mockUser : null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -103,20 +112,20 @@ export const AuthProvider = ({ children }) => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('auth-logout', handleLogoutEvent);
     };
-  }, [navigate]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const login = useCallback(async (email, password, rememberMe = false) => {
+  const login = async (email, password, rememberMe = false) => {
     try {
       setLoading(true);
-      const data = await authService.login(email, password, rememberMe);
-      const currentUser = authService.getCurrentUser();
-      setUser(currentUser);
+    const data = await authService.login(email, password, rememberMe);
+    const currentUser = authService.getCurrentUser();
+    setUser(currentUser);
       
       // Redirect based on role and is_staff
-      if (currentUser?.is_staff) {
+    if (currentUser?.is_staff) {
         navigate('/admin/dashboard');
       } else {
-        const role = currentUser?.role;
+      const role = currentUser?.role;
         switch (role) {
           case 'landowner':
             navigate('/owner/dashboard');
@@ -141,9 +150,9 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [navigate]);
+  };
 
-  const register = useCallback(async (userData) => {
+  const register = async (userData) => {
     try {
       setLoading(true);
       const data = await authService.register(userData);
@@ -180,9 +189,9 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [navigate]);
+  };
 
-  const logout = useCallback(async () => {
+  const logout = async () => {
     try {
       setLoading(true);
       await authService.logout();
@@ -198,10 +207,9 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [navigate]);
+  };
 
-  // Memoize the context value to prevent unnecessary re-renders
-  const value = useMemo(() => ({
+  const value = {
     user,
     loading,
     login,
@@ -210,7 +218,7 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated: !!user,
     userRole: user?.role || null,
     isStaff: user?.is_staff || false,
-  }), [user, loading, login, register, logout]);
+  };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

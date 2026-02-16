@@ -3,6 +3,13 @@ import { useAuth } from '../../context/AuthContext';
 import Spinner from './Spinner';
 
 const ProtectedRoute = ({ children, allowedRoles = [], requireAdmin = false }) => {
+  // Development mode bypass - allow all access
+  const isDev = true; // Set to false when backend is ready
+  
+  if (isDev) {
+    return children;
+  }
+
   const { user, loading } = useAuth();
 
   // Show loading spinner while checking authentication

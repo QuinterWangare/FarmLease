@@ -1,29 +1,23 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { 
-  LayoutDashboard, Package, ShoppingCart, ClipboardList, PlusCircle, 
-  MessageSquare, CreditCard, TrendingUp, TrendingDown, Bell,
-  Save, Edit, Camera, FileText, Award, Check, Plus, Mail, Phone, LogOut, Menu, X
-} from 'lucide-react';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('profile');
   const [activeProfileTab, setActiveProfileTab] = useState('store');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dealer/dashboard' },
-    { id: 'inventory', label: 'Inventory', icon: Package, path: '/dealer/inventory' },
-    { id: 'orders', label: 'Orders', icon: ShoppingCart, badge: 5, path: '/dealer/orders' },
-    { id: 'products', label: 'My Products', icon: ClipboardList, path: '/dealer/products' },
-    { id: 'add-product', label: 'Add New Products', icon: PlusCircle, path: '/dealer/products/add' },
-    { id: 'queries', label: 'Customer Queries', icon: MessageSquare, path: '/dealer/queries' },
-    { id: 'transactions', label: 'Transactions', icon: CreditCard, path: '/dealer/transactions' },
-    { id: 'analytics', label: 'Sales Analytics', icon: TrendingUp, path: '/dealer/analytics' },
-    { id: 'trends', label: 'Market Trends', icon: TrendingDown, path: '/dealer/trends' },
-    { id: 'notifications', label: 'Notifications', icon: Bell, badge: 2, path: '/dealer/notifications' },
+    { id: 'dashboard', label: 'Dashboard', icon: '📊', path: '/dealer/dashboard' },
+    { id: 'inventory', label: 'Inventory', icon: '📦', path: '/dealer/inventory' },
+    { id: 'orders', label: 'Orders', icon: '🛒', badge: 5, path: '/dealer/orders' },
+    { id: 'products', label: 'My Products', icon: '📋', path: '/dealer/products' },
+    { id: 'add-product', label: 'Add New Products', icon: '➕', path: '/dealer/products/add' },
+    { id: 'queries', label: 'Customer Queries', icon: '💬', path: '/dealer/queries' },
+    { id: 'transactions', label: 'Transactions', icon: '💳', path: '/dealer/transactions' },
+    { id: 'analytics', label: 'Sales Analytics', icon: '📈', path: '/dealer/analytics' },
+    { id: 'trends', label: 'Market Trends', icon: '📉', path: '/dealer/trends' },
+    { id: 'notifications', label: 'Notifications', icon: '🔔', badge: 2, path: '/dealer/notifications' },
   ];
 
   const profileTabs = [
@@ -39,14 +33,14 @@ const ProfilePage = () => {
       size: '2.4 MB',
       type: 'PDF',
       verified: true,
-      icon: FileText
+      icon: '📄'
     },
     {
       name: 'Agro-Dealer License',
       size: '1.8 MB',
       type: 'PDF',
       verified: true,
-      icon: Award
+      icon: '🏅'
     }
   ];
 
@@ -63,34 +57,12 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-800 to-emerald-900 md:flex relative">
-      {isSidebarOpen && (
-        <button
-          type="button"
-          onClick={() => setIsSidebarOpen(false)}
-          className="fixed inset-0 bg-black/40 z-30 md:hidden"
-          aria-label="Close menu"
-        />
-      )}
+    <div className="min-h-screen bg-gradient-to-br from-emerald-800 to-emerald-900 flex">
       {/* Sidebar */}
-      <div
-        className={`fixed inset-y-0 left-0 w-64 bg-gradient-to-b from-emerald-900 to-emerald-950 text-white p-6 flex flex-col shadow-2xl overflow-y-auto z-40 transform transition-transform duration-200 md:static md:translate-x-0 ${
-          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <div className="mb-8 flex items-start justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-emerald-100">FarmLease</h1>
-            <p className="text-emerald-300 text-sm">Agro-Dealer Hub</p>
-          </div>
-          <button
-            type="button"
-            onClick={() => setIsSidebarOpen(false)}
-            className="md:hidden text-emerald-200 hover:text-white"
-            aria-label="Close menu"
-          >
-            <X className="w-5 h-5" />
-          </button>
+      <div className="w-64 bg-gradient-to-b from-emerald-900 to-emerald-950 text-white p-6 flex flex-col shadow-2xl overflow-y-auto">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-emerald-100">FarmLease</h1>
+          <p className="text-emerald-300 text-sm">Agro-Dealer Hub</p>
         </div>
 
         <nav className="flex-1 space-y-2">
@@ -98,7 +70,6 @@ const ProfilePage = () => {
             <Link
               key={item.id}
               to={item.path}
-              onClick={() => setIsSidebarOpen(false)}
               className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-200 ${
                 location.pathname === item.path
                   ? 'bg-emerald-700 text-white shadow-lg'
@@ -106,7 +77,7 @@ const ProfilePage = () => {
               }`}
             >
               <div className="flex items-center gap-3">
-                <item.icon className="w-5 h-5" />
+                <span className="text-xl">{item.icon}</span>
                 <span className="font-medium text-sm">{item.label}</span>
               </div>
               {item.badge && (
@@ -135,8 +106,7 @@ const ProfilePage = () => {
               <p className="text-xs text-emerald-300">Store Manager</p>
             </div>
           </Link>
-          <button className="mt-3 w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2">
-            <LogOut className="w-4 h-4" />
+          <button className="mt-3 w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors">
             Logout
           </button>
         </div>
@@ -144,26 +114,16 @@ const ProfilePage = () => {
 
       {/* Main Content */}
       <div className="flex-1 bg-gray-50 overflow-hidden">
-        <div className="h-full overflow-y-auto p-4 sm:p-6 lg:p-8">
+        <div className="h-full overflow-y-auto p-8">
           {/* Header */}
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between mb-8">
-            <div className="flex items-start justify-between gap-4">
-              <button
-                type="button"
-                onClick={() => setIsSidebarOpen(true)}
-                className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg bg-white border border-gray-200 text-gray-600 shadow-sm"
-                aria-label="Open menu"
-              >
-                <Menu className="w-5 h-5" />
-              </button>
-              <div>
-                <h2 className="text-3xl font-bold text-gray-800 mb-1">Profile Settings</h2>
-                <p className="text-gray-500 text-sm max-w-xl">
-                  Manage your store details, personal information, and payment preferences.
-                </p>
-              </div>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-800 mb-1">Profile Settings</h2>
+              <p className="text-gray-500 text-sm max-w-xl">
+                Manage your store details, personal information, and payment preferences.
+              </p>
             </div>
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-3">
               <button className="flex px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg items-center gap-2 hover:bg-gray-50 transition shadow-sm text-sm">
                 Cancel
               </button>
@@ -171,13 +131,13 @@ const ProfilePage = () => {
                 onClick={handleSaveChanges}
                 className="flex px-5 py-2 bg-emerald-700 text-white rounded-lg items-center gap-2 hover:bg-emerald-800 transition shadow-lg text-sm"
               >
-                <Save className="w-4 h-4" />
+                <span className="text-sm">💾</span>
                 Save Changes
               </button>
             </div>
           </div>
 
-          <div className="max-w-5xl mx-auto">
+          <div>
             {/* Profile Tabs */}
             <div className="flex border-b border-gray-200 mb-8 overflow-x-auto">
               {profileTabs.map((tab) => (
@@ -214,11 +174,11 @@ const ProfilePage = () => {
                               src="https://ui-avatars.com/api/?name=GreenHarvest+Agro&background=10b981&color=fff&size=200"
                             />
                             <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                              <Edit className="w-6 h-6 text-white" />
+                              <span className="text-white text-2xl">✏️</span>
                             </div>
                           </div>
                           <button className="absolute bottom-4 right-0 bg-white p-1.5 rounded-full shadow-md border border-gray-100 text-emerald-700 hover:text-emerald-800 transition-colors">
-                            <Camera className="w-4 h-4" />
+                            <span className="text-lg">📷</span>
                           </button>
                         </div>
                         <h4 className="text-xl font-bold text-gray-800">GreenHarvest Agro</h4>
@@ -248,14 +208,14 @@ const ProfilePage = () => {
                             className="flex items-center justify-between p-3 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors group cursor-pointer"
                           >
                             <div className="flex items-center gap-3">
-                              <doc.icon className="w-5 h-5 text-gray-600" />
+                              <span className="text-xl">{doc.icon}</span>
                               <div>
                                 <p className="text-sm font-medium text-gray-800">{doc.name}</p>
                                 <p className="text-xs text-gray-400">{doc.type} • {doc.size}</p>
                               </div>
                             </div>
                             {doc.verified && (
-                              <Check className="w-5 h-5 text-emerald-700" />
+                              <span className="text-emerald-700 text-xl">✓</span>
                             )}
                           </div>
                         ))}
@@ -263,7 +223,7 @@ const ProfilePage = () => {
                           onClick={handleUploadDocument}
                           className="w-full py-2 border border-dashed border-gray-300 rounded-xl text-gray-500 text-xs font-medium hover:border-emerald-700 hover:text-emerald-700 transition-colors flex items-center justify-center gap-2"
                         >
-                          <Plus className="w-4 h-4" /> Upload New Document
+                          <span className="text-sm">➕</span> Upload New Document
                         </button>
                       </div>
                     </div>
@@ -320,7 +280,9 @@ const ProfilePage = () => {
                               Business Email
                             </label>
                             <div className="relative">
-                              <Mail className="absolute inset-y-0 left-0 ml-3 my-auto w-4 h-4 text-gray-400" />
+                              <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-lg">
+                                📧
+                              </span>
                               <input
                                 className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 text-gray-800 text-sm focus:border-emerald-700 focus:ring-emerald-700"
                                 id="email"
@@ -334,7 +296,9 @@ const ProfilePage = () => {
                               Business Phone
                             </label>
                             <div className="relative">
-                              <Phone className="absolute inset-y-0 left-0 ml-3 my-auto w-4 h-4 text-gray-400" />
+                              <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-lg">
+                                📞
+                              </span>
                               <input
                                 className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 text-gray-800 text-sm focus:border-emerald-700 focus:ring-emerald-700"
                                 id="phone"
@@ -394,11 +358,11 @@ const ProfilePage = () => {
                                 src="https://ui-avatars.com/api/?name=David+M&background=10b981&color=fff&size=200"
                               />
                               <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                <Edit className="w-6 h-6 text-white" />
+                                <span className="text-white text-2xl">✏️</span>
                               </div>
                             </div>
                             <button className="absolute bottom-4 right-0 bg-white p-1.5 rounded-full shadow-md border border-gray-100 text-emerald-700 hover:text-emerald-800 transition-colors">
-                              <Camera className="w-4 h-4" />
+                              <span className="text-lg">📷</span>
                             </button>
                           </div>
                           <p className="text-xs text-gray-500 mt-2">PNG, JPG up to 5MB</p>

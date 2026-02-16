@@ -1,14 +1,9 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import LesseeSidebar from '../../components/layout/LesseeSidebar';
+import LesseeHeader from '../../components/layout/LesseeHeader';
 import { 
-  LayoutDashboard, 
-  Map, 
-  Brain, 
-  Store, 
-  FolderOpen, 
-  Wallet,
-  LogOut,
   FileText,
   Search,
   TrendingUp,
@@ -18,16 +13,51 @@ import {
   Grid3x3,
   List,
   Plus,
-  Sprout,
-  Menu,
-  X
+  Menu
 } from 'lucide-react';
 
 const LesseeDashboard = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [portfolioView, setPortfolioView] = useState('grid'); // 'grid' or 'list'
   const displayName = user?.name || user?.username || 'User';
-  const displayRole = user?.role || 'lessee';
+  
+  // Sample notifications
+  const [notifications, setNotifications] = useState([
+    {
+      id: 1,
+      type: 'success',
+      title: 'Payment Confirmed',
+      message: 'Lease payment of Ksh 15,000 received for Plot A42.',
+      timestamp: new Date(Date.now() - 30 * 60000), // 30 minutes ago
+      read: false
+    },
+    {
+      id: 2,
+      type: 'warning',
+      title: 'Lease Renewal Due',
+      message: 'Plot B18 lease expires in 30 days. Renew now.',
+      timestamp: new Date(Date.now() - 5 * 60 * 60000), // 5 hours ago
+      read: false
+    },
+    {
+      id: 3,
+      type: 'info',
+      title: 'Soil Test Complete',
+      message: 'New analysis results available for your leased plots.',
+      timestamp: new Date(Date.now() - 2 * 24 * 60 * 60000), // 2 days ago
+      read: false
+    },
+    {
+      id: 4,
+      type: 'success',
+      title: 'Yield Report Ready',
+      message: 'Your Q4 2025 crop yield summary is now available.',
+      timestamp: new Date(Date.now() - 3 * 24 * 60 * 60000), // 3 days ago
+      read: true
+    }
+  ]);
 
   return (
     <div className="bg-background-light min-h-screen flex relative">
@@ -40,115 +70,36 @@ const LesseeDashboard = () => {
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed lg:sticky top-0 w-64 bg-forest-green h-screen flex flex-col justify-between py-6 px-6 shadow-xl z-40 transition-transform duration-300 border-r border-white/5 ${
-        isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-      }`}>
-        <div>
-          {/* Close Button - Mobile Only */}
-          <button
-            onClick={() => setIsSidebarOpen(false)}
-            className="lg:hidden absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
-          >
-            <X size={24} />
-          </button>
-
-          {/* Logo */}
-          <div className="flex items-center gap-3 mb-10 px-2 mt-2">
-            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(19,236,128,0.2)]">
-              <Sprout className="text-forest-green" size={24} />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-white tracking-tight leading-none font-serif">
-                Farm<span className="text-gray-300 font-normal font-display">Lease</span>
-              </h1>
-              <p className="text-[10px] uppercase tracking-widest text-gray-400 mt-0.5">Asset Management</p>
-            </div>
-          </div>
-
-          {/* Navigation */}
-          <nav className="space-y-1">
-            <Link to="/lessee/dashboard" onClick={() => setIsSidebarOpen(false)} className="flex items-center gap-4 px-4 py-3 bg-white/10 text-white rounded-lg transition-all group shadow-sm backdrop-blur-sm">
-              <LayoutDashboard size={20} className="group-hover:scale-110 transition-transform" />
-              <span className="font-medium text-sm">Dashboard</span>
-            </Link>
-            <Link to="/lessee/browse" onClick={() => setIsSidebarOpen(false)} className="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-all group">
-              <Map size={20} className="group-hover:scale-110 transition-transform" />
-              <span className="font-medium text-sm">Find Land</span>
-            </Link>
-            <div className="flex items-center gap-4 px-4 py-3 text-gray-400 opacity-50 rounded-lg cursor-not-allowed">
-              <Brain size={20} />
-              <span className="font-medium text-sm">AI Predictor</span>
-              <span className="ml-auto bg-primary/20 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold">NEW</span>
-            </div>
-            <div className="flex items-center gap-4 px-4 py-3 text-gray-400 opacity-50 rounded-lg cursor-not-allowed">
-              <Store size={20} />
-              <span className="font-medium text-sm">Agro-Dealer Shop</span>
-            </div>
-            <div className="flex items-center gap-4 px-4 py-3 text-gray-400 opacity-50 rounded-lg cursor-not-allowed">
-              <FolderOpen size={20} />
-              <span className="font-medium text-sm">My Leases</span>
-            </div>
-            <div className="flex items-center gap-4 px-4 py-3 text-gray-400 opacity-50 rounded-lg cursor-not-allowed">
-              <Wallet size={20} />
-              <span className="font-medium text-sm">Financials</span>
-            </div>
-          </nav>
-        </div>
-
-        {/* User Profile & Logout */}
-        <div className="mt-auto space-y-4">
-          <div className="bg-black/20 rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:bg-black/30 transition-colors">
-            <img 
-              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=13ec80&color=0f392b&bold=true`} 
-              alt="User profile" 
-              className="w-10 h-10 rounded-full object-cover border-2 border-primary/20"
-            />
-            <div className="overflow-hidden">
-              <p className="text-sm font-semibold text-white">{displayName}</p>
-              <p className="text-[10px] text-gray-400 truncate uppercase tracking-wider">{displayRole}</p>
-            </div>
-          </div>
-          <div className="h-px bg-white/10 w-full"></div>
-          <button 
-            onClick={logout}
-            className="flex items-center gap-3 px-2 py-1 text-gray-400 hover:text-white transition-all w-full group pl-3"
-          >
-            <LogOut size={18} className="group-hover:-translate-x-1 transition-transform" />
-            <span className="font-medium text-xs uppercase tracking-wide">Logout</span>
-          </button>
-        </div>
-      </aside>
+      <LesseeSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Header */}
-        <header className="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-8 flex-shrink-0 z-10">
-          <div className="flex items-center gap-4">
-            {/* Hamburger Menu Button - Mobile Only */}
-            <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="lg:hidden text-forest-green p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <Menu size={24} />
-            </button>
-            <div>
-              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">Dashboard</h2>
-              <p className="text-xs text-gray-500 mt-1 hidden sm:block">
-                Monitor your lease portfolio performance, manage agreements, and track crop yield predictions in real-time.
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 lg:gap-4">
-            <button className="hidden sm:flex px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg items-center gap-2 hover:bg-gray-50 transition shadow-sm">
-              <FileText size={18} />
-              <span className="font-medium text-sm">Report</span>
-            </button>
-            <Link to="/lessee/browse" className="flex px-4 lg:px-5 py-2 lg:py-2.5 bg-forest-green text-white rounded-lg items-center gap-2 hover:bg-opacity-90 transition shadow-lg shadow-forest-green/20">
-              <Search size={16} className="text-primary" />
-              <span className="font-medium text-sm hidden sm:inline">Find Land</span>
-            </Link>
-          </div>
-        </header>
+        <LesseeHeader
+          title="Dashboard"
+          subtitle="Monitor your lease portfolio performance, manage agreements, and track crop yield predictions in real-time."
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
+          notifications={notifications}
+          onMarkNotificationAsRead={(id) => {
+            setNotifications(notifications.map(n => 
+              n.id === id ? { ...n, read: true } : n
+            ));
+          }}
+          onViewAllNotifications={() => navigate('/lessee/notifications')}
+          rightContent={
+            <>
+              <button className="hidden sm:flex px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg items-center gap-2 hover:bg-gray-50 transition shadow-sm">
+                <FileText size={18} />
+                <span className="font-medium text-sm">Report</span>
+              </button>
+              <Link to="/lessee/browse" className="flex px-4 lg:px-5 py-2 lg:py-2.5 bg-forest-green text-white rounded-lg items-center gap-2 hover:bg-opacity-90 transition shadow-lg shadow-forest-green/20">
+                <Search size={16} className="text-primary" />
+                <span className="font-medium text-sm hidden sm:inline">Find Land</span>
+              </Link>
+            </>
+          }
+        />
 
         {/* Content area - identical structure to FindLandPage */}
         <div className="flex-1 overflow-hidden flex">
@@ -221,19 +172,41 @@ const LesseeDashboard = () => {
                         </a>
                       </div>
                       <div className="flex gap-2">
-                        <button className="p-2 text-gray-400 hover:text-forest-green hover:bg-gray-100 rounded-lg transition">
+                        <button 
+                          onClick={() => setPortfolioView('grid')}
+                          className={`p-2 rounded-lg transition ${
+                            portfolioView === 'grid' 
+                              ? 'text-forest-green bg-emerald-50 border border-emerald-200' 
+                              : 'text-gray-400 hover:text-forest-green hover:bg-gray-100'
+                          }`}
+                        >
                           <Grid3x3 size={20} />
                         </button>
-                        <button className="p-2 text-gray-400 hover:text-forest-green hover:bg-gray-100 rounded-lg transition">
+                        <button 
+                          onClick={() => setPortfolioView('list')}
+                          className={`p-2 rounded-lg transition ${
+                            portfolioView === 'list' 
+                              ? 'text-forest-green bg-emerald-50 border border-emerald-200' 
+                              : 'text-gray-400 hover:text-forest-green hover:bg-gray-100'
+                          }`}
+                        >
                           <List size={20} />
                         </button>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className={`grid gap-6 ${
+                      portfolioView === 'grid' 
+                        ? 'grid-cols-1 md:grid-cols-2' 
+                        : 'grid-cols-1'
+                    }`}>
                       {/* Plot Card 1 */}
-                      <div className="bg-white rounded-2xl p-4 border border-emerald-100 shadow-soft flex flex-col hover:shadow-lg hover:border-emerald-200 transition cursor-pointer">
-                        <div className="relative h-48 w-full bg-gradient-to-br from-gray-200 to-gray-300 rounded-xl overflow-hidden mb-4 group">
+                      <div className={`bg-white rounded-2xl p-4 border border-emerald-100 shadow-soft hover:shadow-lg hover:border-emerald-200 transition cursor-pointer ${
+                        portfolioView === 'grid' ? 'flex flex-col' : 'flex flex-row gap-4'
+                      }`}>
+                        <div className={`relative bg-gradient-to-br from-gray-200 to-gray-300 rounded-xl overflow-hidden group ${
+                          portfolioView === 'grid' ? 'h-48 w-full mb-4' : 'h-40 w-64 shrink-0'
+                        }`}>
                           <div className="absolute inset-0 bg-black/10"></div>
                           <div className="absolute inset-0 flex items-center justify-center">
                             <div 
@@ -249,6 +222,9 @@ const LesseeDashboard = () => {
                             <p className="text-xs opacity-90">3.5 Acres • Loam Soil</p>
                           </div>
                         </div>
+                        <div className={`flex-1 flex flex-col ${
+                          portfolioView === 'list' ? 'justify-between' : ''
+                        }`}>
                         <div className="flex justify-between items-end mt-auto px-1">
                           <div className="flex items-center gap-3">
                             <img 
@@ -275,11 +251,16 @@ const LesseeDashboard = () => {
                           </div>
                           <button className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition shadow-sm">Manage</button>
                         </div>
+                        </div>
                       </div>
 
                       {/* Plot Card 2 */}
-                      <div className="bg-white rounded-2xl p-4 border border-amber-100 shadow-soft flex flex-col hover:shadow-lg hover:border-amber-200 transition cursor-pointer">
-                        <div className="relative h-48 w-full bg-gradient-to-br from-gray-200 to-gray-300 rounded-xl overflow-hidden mb-4 group">
+                      <div className={`bg-white rounded-2xl p-4 border border-amber-100 shadow-soft hover:shadow-lg hover:border-amber-200 transition cursor-pointer ${
+                        portfolioView === 'grid' ? 'flex flex-col' : 'flex flex-row gap-4'
+                      }`}>
+                        <div className={`relative bg-gradient-to-br from-gray-200 to-gray-300 rounded-xl overflow-hidden group ${
+                          portfolioView === 'grid' ? 'h-48 w-full mb-4' : 'h-40 w-64 shrink-0'
+                        }`}>
                           <div className="absolute inset-0 bg-black/10"></div>
                           <div className="absolute inset-0 flex items-center justify-center">
                             <div 
@@ -295,6 +276,9 @@ const LesseeDashboard = () => {
                             <p className="text-xs opacity-90">2.0 Acres • Clay Soil</p>
                           </div>
                         </div>
+                        <div className={`flex-1 flex flex-col ${
+                          portfolioView === 'list' ? 'justify-between' : ''
+                        }`}>
                         <div className="flex justify-between items-end mt-auto px-1">
                           <div className="flex items-center gap-3">
                             <img 
@@ -318,6 +302,7 @@ const LesseeDashboard = () => {
                             Action Required
                           </span>
                           <button className="px-3 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700 shadow-sm transition">Review</button>
+                        </div>
                         </div>
                       </div>
                     </div>

@@ -111,7 +111,7 @@ const FarmOwnerDashboard = () => {
       
       <main className="flex-1 overflow-y-auto bg-background-light p-6 lg:p-10 dark:bg-background-dark">
         <div className="mx-auto max-w-7xl">
-          {/* Header */}
+            {/* Header */}
           <div className="mb-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h2 className="text-4xl font-bold tracking-tight text-earth font-serif dark:text-white">

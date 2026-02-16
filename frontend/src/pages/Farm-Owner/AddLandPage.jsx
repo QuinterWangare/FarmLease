@@ -33,24 +33,25 @@ const AddLandPage = () => {
 
   const [uploadedPhotos, setUploadedPhotos] = useState([
     {
-      id: 1,
+      id: `photo-${Date.now()}-1`,
       url: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=400',
       alt: 'Land view 1',
       isCover: true,
     },
     {
-      id: 2,
+      id: `photo-${Date.now()}-2`,
       url: 'https://images.unsplash.com/photo-1560493676-04071c5f467b?w=400',
       alt: 'Soil detail',
       isCover: false,
     },
     {
-      id: 3,
+      id: `photo-${Date.now()}-3`,
       url: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400',
       alt: 'Irrigation',
       isCover: false,
     },
   ]);
+  const [photoIdCounter, setPhotoIdCounter] = useState(4);
   const [isUploading, setIsUploading] = useState(false);
 
   const handleInputChange = (e) => {
@@ -113,12 +114,13 @@ const AddLandPage = () => {
     // Simulate upload delay
     setTimeout(() => {
       const newPhotos = files.map((file, index) => ({
-        id: uploadedPhotos.length + index + 1,
+        id: `photo-${Date.now()}-${photoIdCounter + index}`,
         url: URL.createObjectURL(file),
         alt: file.name,
         isCover: false,
       }));
       setUploadedPhotos((prev) => [...prev, ...newPhotos]);
+      setPhotoIdCounter((prev) => prev + files.length);
       setIsUploading(false);
     }, 2000);
   };

@@ -21,5 +21,5 @@ urlpatterns = [
     path('profile/', UserProfileView.as_view(), name='profile'),
     path('me/', get_user_profile, name='get_user_profile'),
     path('change-password/', ChangePasswordView.as_view(), name='change_password'),
-    path('admin-stats/', AdminDashboardStatsView.as_view(), name='admin_stats'),
+    path('admin/', AdminDashboardStatsView.as_view(), name='admin'),
 ]

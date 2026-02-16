@@ -1,13 +1,8 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import LesseeSidebar from '../../components/layout/LesseeSidebar';
+import LesseeHeader from '../../components/layout/LesseeHeader';
 import { 
-  LayoutDashboard, 
-  Map, 
-  Brain, 
-  Store, 
-  FolderOpen, 
-  Wallet,
-  LogOut,
   Search,
   Bell,
   Sliders,
@@ -18,13 +13,13 @@ import {
   Heart,
   MapPin,
   ArrowRight,
-  Sprout,
   Menu
 } from 'lucide-react';
 import { useState } from 'react';
 
 const FindLandPage = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedRegions, setSelectedRegions] = useState([]);
   const [selectedCrops, setSelectedCrops] = useState([]);
@@ -34,6 +29,42 @@ const FindLandPage = () => {
   const [customCropInput, setCustomCropInput] = useState('');
   const [showCustomCropInput, setShowCustomCropInput] = useState(false);
   const [filterApplied, setFilterApplied] = useState(false);
+  
+  // Sample notifications
+  const [notifications, setNotifications] = useState([
+    {
+      id: 1,
+      type: 'success',
+      title: 'New Listings Added',
+      message: '5 verified plots in Nakuru match your search criteria.',
+      timestamp: new Date(Date.now() - 45 * 60000), // 45 minutes ago
+      read: false
+    },
+    {
+      id: 2,
+      type: 'info',
+      title: 'Price Reduced',
+      message: 'Plot K-42 in Naivasha now Ksh 15,000/acre (was Ksh 18,000).',
+      timestamp: new Date(Date.now() - 3 * 60 * 60000), // 3 hours ago
+      read: false
+    },
+    {
+      id: 3,
+      type: 'warning',
+      title: 'High Demand Area',
+      message: 'Plots in Eldoret are booking fast. Only 2 left.',
+      timestamp: new Date(Date.now() - 1 * 24 * 60 * 60000), // 1 day ago
+      read: true
+    },
+    {
+      id: 4,
+      type: 'info',
+      title: 'Saved Search Alert',
+      message: 'New plot matching "Maize farming, Nakuru" available.',
+      timestamp: new Date(Date.now() - 2 * 24 * 60 * 60000), // 2 days ago
+      read: true
+    }
+  ]);
   
   // Region autocomplete states
   const [regionInput, setRegionInput] = useState('');
@@ -322,103 +353,24 @@ const FindLandPage = () => {
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed lg:sticky top-0 w-64 bg-forest-green h-screen flex flex-col justify-between py-6 px-6 shadow-xl z-40 transition-transform duration-300 border-r border-white/5 ${
-        isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-      }`}>
-        <div>
-          {/* Close Button - Mobile Only */}
-          <button
-            onClick={() => setIsSidebarOpen(false)}
-            className="lg:hidden absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
-          >
-            <X size={24} />
-          </button>
-
-          {/* Logo */}
-          <div className="flex items-center gap-3 mb-10 px-2 mt-2">
-            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(19,236,128,0.2)]">
-              <Sprout className="text-forest-green" size={24} />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-white tracking-tight leading-none font-serif">
-                Farm<span className="text-gray-300 font-normal font-display">Lease</span>
-              </h1>
-              <p className="text-[10px] uppercase tracking-widest text-gray-400 mt-0.5">Asset Management</p>
-            </div>
-          </div>
-
-          {/* Navigation */}
-          <nav className="space-y-1">
-            <Link to="/lessee/dashboard" onClick={() => setIsSidebarOpen(false)} className="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-all group">
-              <LayoutDashboard size={20} className="group-hover:scale-110 transition-transform" />
-              <span className="font-medium text-sm">Dashboard</span>
-            </Link>
-            <Link to="/lessee/browse" onClick={() => setIsSidebarOpen(false)} className="flex items-center gap-4 px-4 py-3 bg-white/10 text-white rounded-lg transition-all group shadow-sm backdrop-blur-sm">
-              <Map size={20} className="group-hover:scale-110 transition-transform" />
-              <span className="font-medium text-sm">Find Land</span>
-            </Link>
-            <div className="flex items-center gap-4 px-4 py-3 text-gray-400 opacity-50 rounded-lg cursor-not-allowed">
-              <Brain size={20} />
-              <span className="font-medium text-sm">AI Predictor</span>
-              <span className="ml-auto bg-primary/20 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold">NEW</span>
-            </div>
-            <div className="flex items-center gap-4 px-4 py-3 text-gray-400 opacity-50 rounded-lg cursor-not-allowed">
-              <Store size={20} />
-              <span className="font-medium text-sm">Agro-Dealer Shop</span>
-            </div>
-            <div className="flex items-center gap-4 px-4 py-3 text-gray-400 opacity-50 rounded-lg cursor-not-allowed">
-              <FolderOpen size={20} />
-              <span className="font-medium text-sm">My Leases</span>
-            </div>
-            <div className="flex items-center gap-4 px-4 py-3 text-gray-400 opacity-50 rounded-lg cursor-not-allowed">
-              <Wallet size={20} />
-              <span className="font-medium text-sm">Financials</span>
-            </div>
-          </nav>
-        </div>
-
-        {/* User Profile & Logout */}
-        <div className="mt-auto space-y-4">
-          <div className="bg-black/20 rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:bg-black/30 transition-colors">
-            <img 
-              src="https://ui-avatars.com/api/?name=David+M&background=13ec80&color=0f392b&bold=true" 
-              alt="User profile" 
-              className="w-10 h-10 rounded-full object-cover border-2 border-primary/20"
-            />
-            <div className="overflow-hidden">
-              <p className="text-sm font-semibold text-white">David M.</p>
-              <p className="text-[10px] text-gray-400 truncate uppercase tracking-wider">Premium Lessee</p>
-            </div>
-          </div>
-          <div className="h-px bg-white/10 w-full"></div>
-          <button 
-            onClick={logout}
-            className="flex items-center gap-3 px-2 py-1 text-gray-400 hover:text-white transition-all w-full group pl-3"
-          >
-            <LogOut size={18} className="group-hover:-translate-x-1 transition-transform" />
-            <span className="font-medium text-xs uppercase tracking-wide">Logout</span>
-          </button>
-        </div>
-      </aside>
+      <LesseeSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Header */}
-        <header className="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-8 flex-shrink-0 z-10">
-          <div className="flex items-center gap-4">
-            {/* Hamburger Menu Button - Mobile Only */}
-            <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="lg:hidden text-forest-green p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <Menu size={24} />
-            </button>
-            <div>
-              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">Find Land</h2>
-              <p className="text-xs text-gray-500 mt-1 hidden sm:block">Browse available leasing opportunities matched to your preferences</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 lg:gap-6">
+        <LesseeHeader
+          title="Find Land"
+          subtitle="Browse available leasing opportunities matched to your preferences"
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
+          notifications={notifications}
+          onMarkNotificationAsRead={(id) => {
+            setNotifications(notifications.map(n => 
+              n.id === id ? { ...n, read: true } : n
+            ));
+          }}
+          onViewAllNotifications={() => navigate('/lessee/notifications')}
+          rightContent={
             <div className="relative w-64 lg:w-80 hidden md:block">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 z-10" size={20} />
               <input 
@@ -462,12 +414,8 @@ const FindLandPage = () => {
                 </div>
               )}
             </div>
-            <button className="relative p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors hidden sm:block">
-              <Bell size={20} />
-              <span className="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-            </button>
-          </div>
-        </header>
+          }
+        />
 
         <div className="flex-1 overflow-hidden flex">
           {/* Filter Sidebar */}
@@ -561,90 +509,14 @@ const FindLandPage = () => {
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {aiRecommendedCrops.map(crop => (
-                    <button 
+                    <div 
                       key={crop}
-                      onClick={() => addCrop(crop)}
-                      className="group relative inline-flex items-center bg-white text-earth-brown px-3 py-1.5 rounded-full text-xs font-medium border border-gray-200 hover:border-amber-400 hover:text-amber-700 transition-all shadow-sm hover:shadow-md"
+                      className="inline-flex items-center bg-white text-earth-brown px-3 py-1.5 rounded-full text-xs font-medium border border-gray-200 shadow-sm"
                     >
-                      <Sparkles size={14} className="mr-1.5 text-amber-600 group-hover:animate-pulse" />
+                      <Sparkles size={14} className="mr-1.5 text-amber-600" />
                       {crop}
-                      <Plus size={12} className="ml-1.5 text-gray-300 group-hover:text-amber-300" />
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="pt-2">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-2">My Selection</label>
-                <div className="flex flex-wrap gap-2">
-                  {selectedCrops.length === 0 && !showCustomCropInput && (
-                    <p className="text-xs text-gray-400 italic mb-2 w-full">No crops selected. Click "Custom Crop" or AI recommendations above to add crops.</p>
-                  )}
-                  {selectedCrops.map(crop => (
-                    <div key={crop} className="inline-flex items-center bg-emerald-50 text-primary-dark px-3 py-1.5 rounded-full text-xs font-medium border border-emerald-200/50">
-                      {crop}
-                      <button onClick={() => removeCrop(crop)} className="ml-1.5 hover:text-emerald-800">
-                        <X size={14} />
-                      </button>
                     </div>
                   ))}
-                  {!showCustomCropInput ? (
-                    <button 
-                      onClick={() => setShowCustomCropInput(true)}
-                      className="inline-flex items-center bg-gray-50 text-earth-brown px-3 py-1.5 rounded-full text-xs font-medium hover:bg-gray-100 transition-colors border border-earth-brown/20 border-dashed"
-                    >
-                      <Plus size={14} className="mr-1" /> Custom Crop
-                    </button>
-                  ) : (
-                    <div className="relative w-full mt-2">
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="text"
-                          value={customCropInput}
-                          onChange={(e) => {
-                            setCustomCropInput(e.target.value);
-                            setShowCropSuggestions(true);
-                          }}
-                          onFocus={() => setShowCropSuggestions(true)}
-                          onBlur={() => setTimeout(() => setShowCropSuggestions(false), 200)}
-                          onKeyPress={(e) => e.key === 'Enter' && handleAddCustomCrop()}
-                          placeholder="Type crop name (e.g., rice, wheat)..."
-                          autoFocus
-                          className="flex-1 px-3 py-1.5 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-dark/20 focus:border-primary-dark"
-                        />
-                        <button
-                          onClick={() => handleAddCustomCrop()}
-                          className="px-3 py-1.5 bg-primary-dark text-white text-xs rounded-lg hover:bg-emerald-700 transition-colors"
-                        >
-                          Add
-                        </button>
-                        <button
-                          onClick={() => {
-                            setShowCustomCropInput(false);
-                            setCustomCropInput('');
-                            setShowCropSuggestions(false);
-                          }}
-                          className="p-1.5 text-gray-400 hover:text-gray-600"
-                        >
-                          <X size={16} />
-                        </button>
-                      </div>
-                      
-                      {/* Crop Suggestions Dropdown */}
-                      {showCropSuggestions && getCropSuggestions().length > 0 && (
-                        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                          {getCropSuggestions().map(crop => (
-                            <button
-                              key={crop}
-                              onClick={() => handleAddCustomCrop(crop)}
-                              className="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-emerald-50 hover:text-primary-dark transition-colors border-b border-gray-100 last:border-b-0"
-                            >
-                              {crop}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
